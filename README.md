@@ -1,43 +1,61 @@
 # Excel Académie 🌸
 
-A pastel, step-by-step learning site for Excel and finance. French by default, English with one click.
-No build step, no framework: plain HTML/CSS/JS, so it is easy to edit.
+A pastel, step-by-step learning site for Excel, pastel dashboards and finance.
+French by default, English with one click. No build step, no framework: plain HTML/CSS/JS.
+
+Three tracks on the home screen:
+
+1. **Excel skills**: tables, formulas, pivot tables, tricks (levels 1 to 5)
+2. **Visuals & pastel tools**: design and real build projects
+3. **Finance**: financial statements and financial models
+
+Two kinds of practice:
+
+- **Practice inside the site**: a mini Excel where you type a formula and it is checked on changed data.
+- **Build in real Excel**: a step-by-step project with a starter `.xlsx`. When finished, you upload your
+  file and the site checks formulas, formats and design **in your browser** (the file is never sent anywhere).
 
 ## Run it on your computer
 
 ```bash
-node serve.js
+npm install      # only needed for the tests and the starter files
+npm start        # then open http://localhost:4173
 ```
 
-Then open http://localhost:4173
+## Where things are
 
-## Add or change lessons (the file you will edit most)
+| What | Where |
+|---|---|
+| All lessons, projects, tracks (FR + EN) | `content/chapters.js` |
+| Screens and progress | `js/app.js` |
+| Formula checker for practice lessons | `js/engine.js` |
+| Reads uploaded .xlsx files | `js/xlsx-reader.js` |
+| Project checks | `js/project-checks.js` |
+| Colours (all in `:root`) | `css/style.css` |
+| Starter / model Excel files | `assets/` (made by `npm run build:starters`) |
 
-Everything lives in `content/chapters.js`. Copy an existing lesson inside a chapter's `lessons` list,
-change the `id`, texts, `grid`, `target`, `tests` and `solution`. Every text is bilingual: `T('français', 'english')`.
+## Add a lesson or project
 
-After editing, check that every solution passes its own tests in both languages:
+Copy an existing one in `content/chapters.js`. Lesson types: `practice` (formula in the mini sheet),
+`quiz`, `build` (Excel project with upload check). Every text is bilingual: `T('français', 'english')`.
+
+For a new build project: add its starter and model in `tools/make-starters.js`, run
+`npm run build:starters`, then describe `steps`, `inputs`, `scenarios`, `model` and `checks` in the lesson.
+
+## Tests
 
 ```bash
-node tests/verify-content.js
+npm test
 ```
 
-## How an exercise is checked
+- `tests/verify-content.js`: every practice solution passes its own tests in FR and EN, and a typed-in number does not.
+- `tests/verify-projects.js`: the finished model passes every check, the plain starter fails, and sneaky files
+  (typed numbers, wrong formulas, same colours, dollars instead of euros) are caught.
 
-The learner types a real formula (French names like `SOMME` / English like `SUM`). The app evaluates it
-with the HyperFormula engine, then re-runs it on **changed data** (`tests` with `set`). A formula that is
-just a typed-in number fails, because it does not follow the data.
+## Put it online
 
-## Colours and look
-
-All colours are CSS variables at the top of `css/style.css` (`--peach`, `--pink`, `--blue`, `--green`, `--lilac`, `--yellow`).
-
-## Put it online (free)
-
-- **Netlify Drop**: drag the whole `excel-academy` folder onto https://app.netlify.com/drop
-- or **GitHub Pages**: push the folder to a repo and enable Pages.
-
-On an iPad: open the link in Safari, Share, then "Add to Home Screen" to get an app-like icon.
+The site is on GitHub Pages: every push to `main` updates it. The formula engine and the zip library
+are loaded from the jsDelivr CDN (pinned versions in `index.html`).
 
 ## Where progress is saved
 
@@ -45,5 +63,5 @@ In the browser (`localStorage`) on each device. It is not shared between devices
 
 ## Licence note
 
-The formula engine is [HyperFormula](https://github.com/handsontable/hyperformula) (GPL v3, in `vendor/`).
+The formula engine is [HyperFormula](https://github.com/handsontable/hyperformula) (GPL v3), loaded from a CDN.
 That is fine for a free/personal project. If you ever sell the site, check its commercial licence.
