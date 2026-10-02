@@ -26,18 +26,19 @@ npm start        # then open http://localhost:4173
 
 | What | Where |
 |---|---|
-| All lessons, projects, tracks (FR + EN) | `content/chapters.js` |
+| Tracks, chapters, first lessons (FR + EN) | `content/chapters.js` |
+| More lessons: tables, pivot, tools, design, quote tracker, finance models | `content/lessons-2.js` |
 | Screens and progress | `js/app.js` |
 | Formula checker for practice lessons | `js/engine.js` |
 | Reads uploaded .xlsx files | `js/xlsx-reader.js` |
 | Project checks | `js/project-checks.js` |
 | Colours (all in `:root`) | `css/style.css` |
-| Starter / model Excel files | `assets/` (made by `npm run build:starters`) |
+| Starter / model Excel files | `assets/` (made by `tools/make-starters.js` and `tools/make-projects.js`, run `npm run build:starters`) |
 
 ## Add a lesson or project
 
 Copy an existing one in `content/chapters.js`. Lesson types: `practice` (formula in the mini sheet),
-`quiz`, `build` (Excel project with upload check). Every text is bilingual: `T('français', 'english')`.
+`quiz`, `build` (Excel project with upload check). A project can check formulas (re-calculated on changed values), formats, fills, dropdowns, conditional-format rules, frozen panes, filters/tables, charts and pivot tables. Every text is bilingual: `T('français', 'english')`.
 
 For a new build project: add its starter and model in `tools/make-starters.js`, run
 `npm run build:starters`, then describe `steps`, `inputs`, `scenarios`, `model` and `checks` in the lesson.

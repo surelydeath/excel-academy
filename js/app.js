@@ -535,7 +535,7 @@
   function viewBuild(lesson, c) {
     const next = nextOf(lesson, c);
     const ticks = (state.steps[lesson.id] = state.steps[lesson.id] || []);
-    const startUrl = L(lesson.files.start), modelUrl = L(lesson.files.model);
+    const startUrl = L(lesson.files.start), modelUrl = lesson.files.model ? L(lesson.files.model) : null;
     const steps = lesson.steps.map((s, i) => `
       <li class="step ${ticks[i] ? 'done' : ''}">
         <span class="step-n">${i + 1}</span>
@@ -576,7 +576,8 @@
 
     function renderReport(results) {
       const req = results.filter((r) => !r.bonus), okReq = req.filter((r) => r.ok).length;
-      const groups = [['calc', t('groupCalc')], ['design', t('groupDesign')], ['bonus', t('groupBonus')]];
+      const gt = (k, dflt) => (lesson.groupTitles && lesson.groupTitles[k] ? L(lesson.groupTitles[k]) : dflt);
+      const groups = [['calc', gt('calc', t('groupCalc'))], ['design', gt('design', t('groupDesign'))], ['bonus', t('groupBonus')]];
       const list = groups.map(([g, title]) => `
         <h3 class="chk-group">${title}</h3>
         <ul class="checks">${results.filter((r) => r.group === g).map((r) => `
@@ -595,7 +596,7 @@
       $('#teacher').innerHTML = bannerHTML('good', `<b>${esc(pick(t('bravo')))}</b>${out.gain ? `<span class="xp">${esc(t('xpGained', out.gain))}</span>` : `<span class="muted"> ${esc(t('alreadyDone'))}</span>`}${bonusRes ? `<span class="xp">${esc(t('bonusXp', bonusRes.gain))}</span>` : ''}`)
         + noteHTML('teacher', t('teacherSays'), `<div>${L(lesson.explain)}</div>`)
         + (lesson.pro ? noteHTML('tip', t('proTip'), `<div>${L(lesson.pro)}</div>`) : '');
-      $('#nextRow').innerHTML = `<a class="btn soft" href="${esc(modelUrl)}" download>${ic('download', 18)}${t('downloadModel')}</a>` + nextButtons(next, c);
+      $('#nextRow').innerHTML = (modelUrl ? `<a class="btn soft" href="${esc(modelUrl)}" download>${ic('download', 18)}${t('downloadModel')}</a>` : '') + nextButtons(next, c);
       if (!out.repeat) celebrate(out);
       if (bonusRes) setTimeout(() => celebrate(bonusRes), out.repeat ? 0 : 2400);
       $('#teacher').scrollIntoView({ behavior: 'smooth', block: 'nearest' });

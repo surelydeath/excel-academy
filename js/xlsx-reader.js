@@ -1,17 +1,26 @@
 /* Reads an .xlsx file entirely in the browser (nothing is uploaded anywhere).
    An .xlsx is a zip of XML files; we read just what the project checks need:
-   cell values, formulas, fills, bold, number formats, charts, validations.   */
+   cell values, formulas, fills, bold, number formats, dropdowns, conditional
+   formats, frozen panes, tables, charts and pivot tables.                    */
 const XlsxReader = (() => {
   const unescapeXml = (s) =>
     s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'")
       .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(+n)).replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)))
       .replace(/&amp;/g, '&');
 
-  const attrs = (s) => { const o = {}; s.replace(/([\w:]+)\s*=\s*"([^"]*)"/g, (_, k, v) => { o[k] = unescapeXml(v); return ''; }); return o; };
+  const attrs = (s) => { const o = {}; (s || '').replace(/([\w:]+)\s*=\s*"([^"]*)"/g, (_, k, v) => { o[k] = unescapeXml(v); return ''; }); return o; };
 
   const BUILTIN_FMT = { 0: 'General', 1: '0', 2: '0.00', 3: '#,##0', 4: '#,##0.00', 9: '0%', 10: '0.00%', 11: '0.00E+00', 12: '# ?/?', 13: '# ??/??' };
   // built-in currency / accounting ids (symbol depends on the user's region, so the code is unknown)
   const BUILTIN_CURRENCY = new Set([5, 6, 7, 8, 41, 42, 43, 44]);
+
+  // true when a number format shows a date or time (ids 14-22 and 45-47, or d / m / y / h / s codes)
+  function isDateFmt(code, id) {
+    if ((id >= 14 && id <= 22) || (id >= 45 && id <= 47)) return true;
+    if (!code || /^general$/i.test(code)) return false;
+    const c = code.replace(/"[^"]*"/g, '').replace(/\[[^\]]*\]/g, '').replace(/\\./g, '');
+    return /[dmyhs]/i.test(c);
+  }
 
   function parseSharedStrings(xml) {
     if (!xml) return [];
@@ -44,7 +53,7 @@ const XlsxReader = (() => {
       const fg = pat && /<fgColor\b([^>]*?)\/?>/.exec(pat[2] || '');
       const c = fg ? attrs(fg[1]) : {};
       let solid = pa.patternType === 'solid';
-      let key = c.rgb ? c.rgb.toUpperCase() : c.theme !== undefined ? 'theme' + c.theme + ':' + (c.tint || 0) : c.indexed !== undefined ? 'idx' + c.indexed : 'none';
+      const key = c.rgb ? c.rgb.toUpperCase() : c.theme !== undefined ? 'theme' + c.theme + ':' + (c.tint || 0) : c.indexed !== undefined ? 'idx' + c.indexed : 'none';
       // white (or "automatic") backgrounds do not count as a colour
       if (/^(FF)?FFFFFF$/.test(key) || key === 'theme0:0' || key === 'idx64' || key === 'idx9') solid = false;
       styles.fills.push({ solid, key });
@@ -66,6 +75,7 @@ const XlsxReader = (() => {
       currencyBuiltin: BUILTIN_CURRENCY.has(xf.numFmtId),
       percent: /%/.test(code) || xf.numFmtId === 9 || xf.numFmtId === 10,
       euro: /€|\[\$€|\\u20ac/i.test(code),
+      date: isDateFmt(code, xf.numFmtId),
       bold: font.bold, size: font.size,
       filled: fill.solid, fillKey: fill.solid ? fill.key : null,
     };
@@ -94,11 +104,56 @@ const XlsxReader = (() => {
       cells[at.r.toUpperCase()] = { value, f, hasFormula: !!fm, sharedChild, style: describeStyle(styles, +(at.s || 0)) };
       return '';
     });
+
+    const validations = [], conditionals = [];
+    xml.replace(/<dataValidation\b([^>]*?)(?:\/>|>([\s\S]*?)<\/dataValidation>)/g, (_, a, inner = '') => {
+      const o = attrs(a); const f1 = /<formula1>([\s\S]*?)<\/formula1>/.exec(inner);
+      validations.push({ sqref: o.sqref || '', type: o.type || '', formula1: f1 ? unescapeXml(f1[1]) : '' });
+      return '';
+    });
+    xml.replace(/<conditionalFormatting\b([^>]*?)>([\s\S]*?)<\/conditionalFormatting>/g, (_, a, inner) => {
+      conditionals.push({ sqref: attrs(a).sqref || '', rules: (inner.match(/<cfRule\b/g) || []).length });
+      return '';
+    });
     return {
-      cells,
-      hasConditionalFormatting: /<conditionalFormatting\b/.test(xml),
-      hasDataValidation: /<dataValidation\b/.test(xml),
+      cells, validations, conditionals,
+      hasConditionalFormatting: conditionals.length > 0,
+      hasDataValidation: validations.length > 0,
+      freeze: /<pane\b[^>]*state="frozen"/.test(xml),
+      autoFilter: /<autoFilter\b/.test(xml),
     };
+  }
+
+  // Pivot tables: which fields sit in rows / columns / filters, and what is calculated
+  async function readPivots(zip, text) {
+    const out = [];
+    const names = Object.keys(zip.files).filter((n) => /^xl\/pivotTables\/pivotTable\d+\.xml$/.test(n));
+    for (const name of names) {
+      const xml = await text(name);
+      if (!xml) continue;
+      const relsXml = (await text(name.replace('pivotTables/', 'pivotTables/_rels/') + '.rels')) || '';
+      const target = (/Target="([^"]*pivotCacheDefinition\d+\.xml)"/.exec(relsXml) || [])[1];
+      const cacheXml = target ? await text('xl/' + target.replace(/^(\.\.\/)+/, '').replace(/^\/?xl\//, '')) : null;
+      const fields = [];
+      (cacheXml || '').replace(/<cacheField\b([^>]*?)(?:\/>|>)/g, (_, a) => { fields.push(unescapeXml(attrs(a).name || '')); return ''; });
+      const pf = [];
+      const block = (/<pivotFields\b[^>]*>([\s\S]*?)<\/pivotFields>/.exec(xml) || [])[1] || '';
+      block.replace(/<pivotField\b([^>]*?)(?:\/>|>[\s\S]*?<\/pivotField>)/g, (_, a) => { pf.push(attrs(a)); return ''; });
+      const pivot = { name: attrs((/<pivotTableDefinition\b([^>]*)>/.exec(xml) || [])[1]).name || '', rows: [], cols: [], pages: [], data: [] };
+      pf.forEach((p, i) => {
+        const label = fields[i] || ('field' + i);
+        if (p.axis === 'axisRow') pivot.rows.push(label);
+        else if (p.axis === 'axisCol') pivot.cols.push(label);
+        else if (p.axis === 'axisPage') pivot.pages.push(label);
+      });
+      xml.replace(/<dataField\b([^>]*?)\/?>/g, (_, a) => {
+        const o = attrs(a);
+        pivot.data.push({ field: fields[+o.fld] || ('field' + o.fld), agg: o.subtotal || 'sum', name: o.name || '' });
+        return '';
+      });
+      out.push(pivot);
+    }
+    return out;
   }
 
   async function read(data, JSZipLib) {
@@ -125,8 +180,12 @@ const XlsxReader = (() => {
       if (!xml) continue;
       sheets.push(Object.assign({ name: s.name }, parseSheet(xml, shared, styles)));
     }
-    const hasChart = Object.keys(zip.files).some((n) => /^xl\/charts\/chart\d*\.xml$/.test(n));
-    return { sheets, hasChart };
+    const files = Object.keys(zip.files);
+    const hasChart = files.some((n) => /^xl\/charts\/chart\d*\.xml$/.test(n));
+    const tableCount = files.filter((n) => /^xl\/tables\/table\d*\.xml$/.test(n)).length;
+    const hasSlicer = files.some((n) => /^xl\/slicers\/slicer\d*\.xml$/.test(n));
+    const pivots = await readPivots(zip, text);
+    return { sheets, hasChart, tableCount, hasSlicer, pivots };
   }
 
   return { read };

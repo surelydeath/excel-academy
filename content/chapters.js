@@ -21,6 +21,7 @@
    ============================================================ */
 
 const T = (fr, en) => ({ fr, en });
+window.T = T; // shared with content/lessons-2.js
 
 window.LEVELS = {
   1: T('Les bases', 'The basics'),
@@ -891,9 +892,9 @@ window.BADGES = [
 
 window.GARDEN = [
   { xp: 0,   icon: '🌱', name: T('Graine', 'Seed') },
-  { xp: 30,  icon: '🌿', name: T('Pousse', 'Sprout') },
-  { xp: 80,  icon: '🌷', name: T('Bourgeon', 'Bud') },
-  { xp: 140, icon: '🌸', name: T('Fleur', 'Blossom') },
-  { xp: 220, icon: '💐', name: T('Bouquet', 'Bouquet') },
-  { xp: 320, icon: '🌺', name: T('Jardin', 'Garden') },
+  { xp: 40,  icon: '🌿', name: T('Pousse', 'Sprout') },
+  { xp: 100, icon: '🌷', name: T('Bourgeon', 'Bud') },
+  { xp: 180, icon: '🌸', name: T('Fleur', 'Blossom') },
+  { xp: 280, icon: '💐', name: T('Bouquet', 'Bouquet') },
+  { xp: 400, icon: '🌺', name: T('Jardin', 'Garden') },
 ];

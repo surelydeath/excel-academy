@@ -9,6 +9,7 @@ global.HyperFormula = HyperFormula;
 require(path.join(root, 'node_modules/hyperformula/dist/languages/frFR.js'));
 global.window = global;
 require(path.join(root, 'content/chapters.js'));
+require(path.join(root, 'content/lessons-2.js'));
 const Engine = require(path.join(root, 'js/engine.js'));
 
 const R = (v, lang) => (v && typeof v === 'object' && !Array.isArray(v) ? v[lang] : v);

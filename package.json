@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node serve.js",
     "test": "node tests/verify-content.js && node tests/verify-projects.js",
-    "build:starters": "node tools/make-starters.js"
+    "build:starters": "node tools/make-starters.js && node tools/make-projects.js"
   },
   "devDependencies": {
     "exceljs": "^4.4.0",
