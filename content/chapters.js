@@ -65,10 +65,10 @@ window.CHAPTERS = [
         title: T('Ton premier calcul', 'Your first calculation'),
         intro: T(
           `<p>Dans Excel, une formule <strong>commence toujours par <code>=</code></strong>. Ensuite, tu écris ton calcul avec des <strong>adresses de cellules</strong> (comme <code>B2</code>) au lieu de chiffres tapés à la main.</p>
-           <p>Pourquoi ? Parce que si le prix change, ton résultat se met à jour tout seul. C'est ça, la magie ✨</p>
+           <p>Pourquoi ? Parce que si le prix change, ton résultat se met à jour tout seul. C'est ça, la magie.</p>
            <p>Les opérateurs : <code>+</code> addition, <code>-</code> soustraction, <code>*</code> multiplication, <code>/</code> division.</p>`,
           `<p>In Excel, a formula <strong>always starts with <code>=</code></strong>. Then you write your calculation using <strong>cell addresses</strong> (like <code>B2</code>) instead of typed numbers.</p>
-           <p>Why? If the price changes, your result updates by itself. That's the magic ✨</p>
+           <p>Why? If the price changes, your result updates by itself. That's the magic.</p>
            <p>Operators: <code>+</code> add, <code>-</code> subtract, <code>*</code> multiply, <code>/</code> divide.</p>`),
         task: T('Dans la cellule rose, calcule le <strong>total</strong> de la bougie Lune : prix × quantité.',
                 'In the pink cell, calculate the <strong>total</strong> for the Moon candle: price × quantity.'),
@@ -95,7 +95,7 @@ window.CHAPTERS = [
                'Pro tip: click the cell, then double-click the small square at its bottom-right corner (fill handle) to copy the formula down in a second.'),
       },
       {
-        id: 'f2', type: 'practice', level: 1, xp: 10,
+        id: 'f2', type: 'practice', level: 1, xp: 10, requires: ['f1'],
         title: T('SOMME : additionner une plage', 'SUM: add up a range'),
         intro: T(
           `<p>Additionner cellule par cellule (<code>=B2+B3+B4+B5</code>) devient vite pénible. La fonction <code>SOMME</code> additionne toute une <strong>plage</strong>.</p>
@@ -131,7 +131,7 @@ window.CHAPTERS = [
                'Pro tip: select the cell under a column of numbers and press Alt + = (Mac: ⌘ + ⇧ + T). Excel writes the SUM for you!'),
       },
       {
-        id: 'f3', type: 'practice', level: 1, xp: 10,
+        id: 'f3', type: 'practice', level: 1, xp: 10, requires: ['f2'],
         title: T('MOYENNE : la valeur typique', 'AVERAGE: the typical value'),
         intro: T(
           `<p><code>MOYENNE</code> additionne les valeurs puis divise par leur nombre. Elle s'écrit comme <code>SOMME</code> : <code>=MOYENNE(plage)</code>.</p>
@@ -164,7 +164,7 @@ window.CHAPTERS = [
                'Pro tip: select some cells with numbers and look at the bottom of the Excel window: sum, average and count appear with no formula at all.'),
       },
       {
-        id: 'f4', type: 'practice', level: 1, xp: 10,
+        id: 'f4', type: 'practice', level: 1, xp: 10, requires: ['f2'],
         title: T('MIN et MAX : les extrêmes', 'MIN and MAX: the extremes'),
         intro: T(
           `<p><code>MAX(plage)</code> donne la plus grande valeur, <code>MIN(plage)</code> la plus petite.</p>
@@ -199,7 +199,7 @@ window.CHAPTERS = [
 
       /* ---------- NIVEAU 2 ---------- */
       {
-        id: 'f5', type: 'practice', level: 2, xp: 15,
+        id: 'f5', type: 'practice', level: 2, xp: 15, requires: ['f1'],
         title: T('SI : prendre une décision', 'IF: make a decision'),
         intro: T(
           `<p><code>SI</code> permet à Excel de choisir entre deux résultats selon une condition.</p>
@@ -233,7 +233,7 @@ window.CHAPTERS = [
                'Pro tip: to combine several conditions, use <code>AND(…)</code> and <code>OR(…)</code> inside the IF.'),
       },
       {
-        id: 'f6', type: 'practice', level: 2, xp: 15,
+        id: 'f6', type: 'practice', level: 2, xp: 15, requires: ['f1'],
         title: T('Références absolues ($)', 'Absolute references ($)'),
         intro: T(
           `<p>Quand tu recopies une formule vers le bas, les références <strong>glissent</strong> : <code>B2</code> devient <code>B3</code>, puis <code>B4</code>… C'est pratique… sauf pour une valeur <em>fixe</em> comme un taux de TVA.</p>
@@ -265,7 +265,7 @@ window.CHAPTERS = [
                'Pro tip: while typing a reference, press <strong>F4</strong> (Mac: ⌘ + T) to cycle: <code>E1</code> → <code>$E$1</code> → <code>E$1</code> → <code>$E1</code>.'),
       },
       {
-        id: 'f7', type: 'practice', level: 2, xp: 15,
+        id: 'f7', type: 'practice', level: 2, xp: 15, requires: ['f2'],
         title: T('SOMME.SI : additionner avec un critère', 'SUMIF: add up with a criterion'),
         intro: T(
           `<p><code>SOMME.SI</code> additionne seulement les lignes qui correspondent à un critère.</p>
@@ -301,7 +301,7 @@ window.CHAPTERS = [
                'Pro tip: for several criteria at once (category AND month), use <code>SUMIFS</code>. You\'ll see it at level 4.'),
       },
       {
-        id: 'f8', type: 'practice', level: 2, xp: 15,
+        id: 'f8', type: 'practice', level: 2, xp: 15, requires: ['f2'],
         title: T('NB.SI : compter avec un critère', 'COUNTIF: count with a criterion'),
         intro: T(
           `<p><code>NB.SI</code> compte combien de cellules respectent un critère.</p>
@@ -342,7 +342,7 @@ window.CHAPTERS = [
 
       /* ---------- NIVEAU 3 ---------- */
       {
-        id: 'f9', type: 'practice', level: 3, xp: 20,
+        id: 'f9', type: 'practice', level: 3, xp: 20, requires: ['f5'],
         title: T('SI imbriqués : plusieurs cas', 'Nested IFs: several cases'),
         intro: T(
           `<p>Et s'il y a <strong>plus de deux</strong> résultats possibles ? Tu peux mettre un <code>SI</code> <em>à l'intérieur</em> d'un autre SI, à la place du « sinon » :</p>
@@ -380,7 +380,7 @@ window.CHAPTERS = [
                'Pro tip: with Excel 2019 or 365, <code>IFS</code> is more readable for many cases. For tiers, a small table + <code>VLOOKUP</code> is even cleaner.'),
       },
       {
-        id: 'f10', type: 'practice', level: 3, xp: 20,
+        id: 'f10', type: 'practice', level: 3, xp: 20, requires: ['f1','f2'],
         title: T('RECHERCHEV : retrouver une information', 'VLOOKUP: find a piece of information'),
         intro: T(
           `<p><code>RECHERCHEV</code> cherche une valeur dans la <strong>première colonne</strong> d'un tableau, puis renvoie une information située dans la même ligne.</p>
@@ -414,7 +414,7 @@ window.CHAPTERS = [
                'Limit: VLOOKUP can only search the <em>leftmost</em> column of the table. The next two lessons show how to go beyond that.'),
       },
       {
-        id: 'f11', type: 'practice', level: 3, xp: 20,
+        id: 'f11', type: 'practice', level: 3, xp: 20, requires: ['f10'],
         title: T('INDEX + EQUIV : le duo flexible', 'INDEX + MATCH: the flexible duo'),
         intro: T(
           `<p>Deux fonctions qui travaillent en équipe :</p>
@@ -455,7 +455,7 @@ window.CHAPTERS = [
                'Pro tip: in Excel 365 / 2021, <code>XLOOKUP</code> replaces both: <code>=XLOOKUP(E2,B2:B5,C2:C5)</code>. You\'ll learn it at level 5, but understanding INDEX/MATCH is still valuable.'),
       },
       {
-        id: 'f12', type: 'practice', level: 3, xp: 20,
+        id: 'f12', type: 'practice', level: 3, xp: 20, requires: ['f10'],
         title: T('SIERREUR : zéro erreur moche', 'IFERROR: no ugly errors'),
         intro: T(
           `<p>Quand une recherche ne trouve rien, Excel affiche <code>#N/A</code>, ce qui fait peu professionnel dans un tableau de bord.</p>
@@ -676,6 +676,7 @@ window.CHAPTERS = [
   /* ------------------------------------------------- visual: projects */
   {
     id: 'dash', track: 'visual', color: 'pink', icon: '🎀',
+    requires: ['f1', 'f2', 'f6'],
     title: T('Outils pastel', 'Pastel tools'),
     tagline: T('Construire de vrais outils beaux et utiles, dans Excel', 'Build real tools that are pretty and useful, in Excel'),
     levelNames: { 2: T('Projets', 'Projects') },
@@ -714,28 +715,28 @@ window.CHAPTERS = [
             body: T(
               `<p>Coût de revient = <strong>matières + main-d'œuvre + autres coûts</strong>. La main-d'œuvre, c'est le temps (en minutes) ÷ 60 × le taux horaire.</p>
                <p>Clique sur <code>B10</code> et écris la formule avec des <strong>références de cellules</strong> (<code>B3</code>, <code>B4</code>…), jamais avec des chiffres tapés.</p>
-               <details><summary>💡 Indice</summary><p>Matières <code>B3</code>, minutes <code>B4</code>, taux horaire <code>B5</code>, autres coûts <code>B6</code> :<br><code>=B3+B4/60*B5+B6</code></p></details>`,
+               <details><summary>Indice</summary><p>Matières <code>B3</code>, minutes <code>B4</code>, taux horaire <code>B5</code>, autres coûts <code>B6</code> :<br><code>=B3+B4/60*B5+B6</code></p></details>`,
               `<p>Cost price = <strong>materials + labour + other costs</strong>. Labour is the time (in minutes) ÷ 60 × the hourly rate.</p>
                <p>Click <code>B10</code> and write the formula using <strong>cell references</strong> (<code>B3</code>, <code>B4</code>…), never typed numbers.</p>
-               <details><summary>💡 Hint</summary><p>Materials <code>B3</code>, minutes <code>B4</code>, hourly rate <code>B5</code>, other costs <code>B6</code>:<br><code>=B3+B4/60*B5+B6</code></p></details>`),
+               <details><summary>Hint</summary><p>Materials <code>B3</code>, minutes <code>B4</code>, hourly rate <code>B5</code>, other costs <code>B6</code>:<br><code>=B3+B4/60*B5+B6</code></p></details>`),
           },
           {
             title: T('Les prix de vente (B11 et B12)', 'The selling prices (B11 and B12)'),
             body: T(
               `<p><strong>Prix HT</strong> = coût de revient × (1 + taux de marge). <strong>Prix TTC</strong> = prix HT × (1 + TVA).</p>
-               <details><summary>💡 Indice</summary><p><code>B11</code> : <code>=B10*(1+B7)</code><br><code>B12</code> : <code>=B11*(1+B8)</code></p></details>`,
+               <details><summary>Indice</summary><p><code>B11</code> : <code>=B10*(1+B7)</code><br><code>B12</code> : <code>=B11*(1+B8)</code></p></details>`,
               `<p><strong>Price excl. VAT</strong> = cost price × (1 + markup). <strong>Price incl. VAT</strong> = price excl. VAT × (1 + VAT).</p>
-               <details><summary>💡 Hint</summary><p><code>B11</code>: <code>=B10*(1+B7)</code><br><code>B12</code>: <code>=B11*(1+B8)</code></p></details>`),
+               <details><summary>Hint</summary><p><code>B11</code>: <code>=B10*(1+B7)</code><br><code>B12</code>: <code>=B11*(1+B8)</code></p></details>`),
           },
           {
             title: T('Bénéfice et taux de marque (B13 et B14)', 'Profit and margin rate (B13 and B14)'),
             body: T(
               `<p><strong>Bénéfice</strong> = prix HT − coût de revient. <strong>Taux de marque</strong> = bénéfice ÷ prix HT.</p>
-               <p>⚠️ Ne confonds pas : le <em>taux de marge</em> se calcule sur le coût, le <em>taux de marque</em> sur le prix de vente. Avec 50 % de marge, tu n'as « que » 33 % de taux de marque !</p>
-               <details><summary>💡 Indice</summary><p><code>B13</code> : <code>=B11-B10</code><br><code>B14</code> : <code>=B13/B11</code></p></details>`,
+               <p><strong>Attention :</strong> ne confonds pas : le <em>taux de marge</em> se calcule sur le coût, le <em>taux de marque</em> sur le prix de vente. Avec 50 % de marge, tu n'as « que » 33 % de taux de marque !</p>
+               <details><summary>Indice</summary><p><code>B13</code> : <code>=B11-B10</code><br><code>B14</code> : <code>=B13/B11</code></p></details>`,
               `<p><strong>Profit</strong> = price excl. VAT − cost price. <strong>Margin rate</strong> = profit ÷ price excl. VAT.</p>
-               <p>⚠️ Don't mix them up: the <em>markup</em> is computed on cost, the <em>margin rate</em> on the selling price. With a 50% markup you only get a 33% margin rate!</p>
-               <details><summary>💡 Hint</summary><p><code>B13</code>: <code>=B11-B10</code><br><code>B14</code>: <code>=B13/B11</code></p></details>`),
+               <p><strong>Careful:</strong> don't mix them up: the <em>markup</em> is computed on cost, the <em>margin rate</em> on the selling price. With a 50% markup you only get a 33% margin rate!</p>
+               <details><summary>Hint</summary><p><code>B13</code>: <code>=B11-B10</code><br><code>B14</code>: <code>=B13/B11</code></p></details>`),
           },
           {
             title: T('Mets les bons formats (€ et %)', 'Apply the right formats (€ and %)'),
@@ -751,9 +752,9 @@ window.CHAPTERS = [
             title: T('Colore le titre et l\'en-tête', 'Colour the title and header'),
             body: T(
               `<p>Mets le titre <code>A1</code> en <strong>gras</strong> (<kbd>Ctrl</kbd> + <kbd>G</kbd>) et plus grand. Puis donne une couleur de fond à l'en-tête <code>A2:B2</code> : <em>Accueil → Couleur de remplissage → Autres couleurs</em>.</p>
-               <p>Des pastels qui marchent bien : 🌸 rose <code>F9B9D0</code> · 💙 bleu <code>A8D3F5</code> · 🍑 pêche <code>FBC9A0</code> · 🌿 vert <code>BDE5A6</code> · 💜 lilas <code>D3B6F3</code>. (Onglet <em>Personnalisées</em> : saisis le code, ou choisis une teinte proche.)</p>`,
+               <p>Des pastels qui marchent bien : <i class="sw" style="background:#F9B9D0"></i> rose <code>F9B9D0</code>, <i class="sw" style="background:#A8D3F5"></i> bleu <code>A8D3F5</code>, <i class="sw" style="background:#FBC9A0"></i> pêche <code>FBC9A0</code>, <i class="sw" style="background:#BDE5A6"></i> vert <code>BDE5A6</code>, <i class="sw" style="background:#D3B6F3"></i> lilas <code>D3B6F3</code>. (Onglet <em>Personnalisées</em> : saisis le code, ou choisis une teinte proche.)</p>`,
               `<p>Make the title <code>A1</code> <strong>bold</strong> (<kbd>Ctrl</kbd> + <kbd>B</kbd>) and larger. Then give the header <code>A2:B2</code> a fill colour: <em>Home → Fill Color → More Colors</em>.</p>
-               <p>Pastels that work well: 🌸 pink <code>F9B9D0</code> · 💙 blue <code>A8D3F5</code> · 🍑 peach <code>FBC9A0</code> · 🌿 green <code>BDE5A6</code> · 💜 lilac <code>D3B6F3</code>. (<em>Custom</em> tab: type the code, or pick a close shade.)</p>`),
+               <p>Pastels that work well: <i class="sw" style="background:#F9B9D0"></i> pink <code>F9B9D0</code>, <i class="sw" style="background:#A8D3F5"></i> blue <code>A8D3F5</code>, <i class="sw" style="background:#FBC9A0"></i> peach <code>FBC9A0</code>, <i class="sw" style="background:#BDE5A6"></i> green <code>BDE5A6</code>, <i class="sw" style="background:#D3B6F3"></i> lilac <code>D3B6F3</code>. (<em>Custom</em> tab: type the code, or pick a close shade.)</p>`),
           },
           {
             title: T('Sépare « à remplir » et « calculé » par la couleur', 'Separate "to fill in" from "calculated" with colour'),
@@ -764,7 +765,7 @@ window.CHAPTERS = [
                <p>Give the starting cells <code>B3:B8</code> a light colour (e.g. peach <code>FDE9D8</code>) and the results <code>B10:B14</code> a <strong>different</strong> colour (e.g. green <code>E4F5DA</code>).</p>`),
           },
           {
-            title: T('✨ Bonus : va plus loin', '✨ Bonus: go further'),
+            title: T('Bonus : va plus loin', 'Bonus: go further'),
             body: T(
               `<p>Facultatif, mais c'est ce qui fait la différence :</p>
                <p>• <strong>Mise en forme conditionnelle</strong> sur <code>B14</code> : une couleur d'alerte si le taux de marque passe sous 20 % (<em>Accueil → Mise en forme conditionnelle</em>).<br>
@@ -859,30 +860,33 @@ window.CHAPTERS = [
 window.TRACKS = [
   {
     id: 'skills', icon: '🧠', color: 'blue',
+    short: T('Compétences', 'Skills'),
     title: T('Compétences Excel', 'Excel skills'),
     tagline: T('Maîtriser Excel de zéro à expert : tableaux, formules, tableaux croisés, astuces.', 'Master Excel from zero to expert: tables, formulas, pivot tables, tricks.'),
   },
   {
     id: 'visual', icon: '🎀', color: 'pink',
+    short: T('Visuel', 'Visual'),
     title: T('Visuel & outils pastel', 'Visuals & pastel tools'),
     tagline: T('Créer de beaux tableaux de bord, comme dans les modèles que tu aimes.', 'Create beautiful dashboards, like the templates you love.'),
   },
   {
     id: 'finance', icon: '💶', color: 'green',
+    short: T('Finance', 'Finance'),
     title: T('Finance', 'Finance'),
     tagline: T('Comprendre les chiffres d\'une entreprise et construire des modèles financiers.', 'Understand a company\'s numbers and build financial models.'),
   },
 ];
 
 window.BADGES = [
-  { id: 'first',   icon: '🌱', title: T('Premier pas', 'First step'),        desc: T('Termine ta 1ʳᵉ leçon', 'Finish your 1st lesson') },
-  { id: 'streak3', icon: '🔥', title: T('En feu', 'On fire'),                desc: T('3 jours d\'affilée', '3 days in a row') },
-  { id: 'nohint',  icon: '🧠', title: T('Sans filet', 'No safety net'),      desc: T('Réussis une leçon sans indice', 'Solve a lesson with no hint') },
-  { id: 'level2',  icon: '🌸', title: T('Niveau 2', 'Level 2'),              desc: T('Termine tout le niveau 1 des formules', 'Finish all level 1 of formulas') },
-  { id: 'five',    icon: '💐', title: T('Bouquet', 'Bouquet'),               desc: T('Termine 5 leçons', 'Finish 5 lessons') },
-  { id: 'chapter', icon: '🏆', title: T('Chapitre complété', 'Chapter done'), desc: T('Termine un chapitre entier', 'Finish a whole chapter') },
-  { id: 'builder', icon: '🛠️', title: T('Bâtisseur', 'Builder'),              desc: T('Réussis ton premier projet dans Excel', 'Complete your first project in Excel') },
-  { id: 'bonus',   icon: '✨', title: T('Perfectionniste', 'Perfectionist'),  desc: T('Réussis un bonus de projet', 'Complete a project bonus') },
+  { id: 'first',   icon: 'star', title: T('Premier pas', 'First step'),        desc: T('Termine ta 1ʳᵉ leçon', 'Finish your 1st lesson') },
+  { id: 'streak3', icon: 'flame', title: T('En feu', 'On fire'),                desc: T('3 jours d\'affilée', '3 days in a row') },
+  { id: 'nohint',  icon: 'target', title: T('Sans filet', 'No safety net'),      desc: T('Réussis une leçon sans indice', 'Solve a lesson with no hint') },
+  { id: 'level2',  icon: 'bulb', title: T('Niveau 2', 'Level 2'),              desc: T('Termine tout le niveau 1 des formules', 'Finish all level 1 of formulas') },
+  { id: 'five',    icon: 'book', title: T('Bouquet', 'Bouquet'),               desc: T('Termine 5 leçons', 'Finish 5 lessons') },
+  { id: 'chapter', icon: 'trophy', title: T('Chapitre complété', 'Chapter done'), desc: T('Termine un chapitre entier', 'Finish a whole chapter') },
+  { id: 'builder', icon: 'wrench', title: T('Bâtisseur', 'Builder'),              desc: T('Réussis ton premier projet dans Excel', 'Complete your first project in Excel') },
+  { id: 'bonus',   icon: 'layers', title: T('Perfectionniste', 'Perfectionist'),  desc: T('Réussis un bonus de projet', 'Complete a project bonus') },
 ];
 
 window.GARDEN = [

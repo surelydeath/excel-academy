@@ -42,6 +42,20 @@ Copy an existing one in `content/chapters.js`. Lesson types: `practice` (formula
 For a new build project: add its starter and model in `tools/make-starters.js`, run
 `npm run build:starters`, then describe `steps`, `inputs`, `scenarios`, `model` and `checks` in the lesson.
 
+## Prerequisites (recommended-before links)
+
+Add `requires: ['f1', 'f2']` (lesson ids) to a lesson, or to a whole chapter. If those lessons are not done,
+the learner sees a soft "Before you start" panel with a link to each one, an "I already know this" button
+and "Continue anyway". Nothing is ever locked. The home screen's Continue button also follows the path:
+if the next lesson has unmet prerequisites, it points to the first one of those instead.
+
+## Look and feel
+
+Everything visual is in `css/style.css`: colour tokens, type and radii are at the top (`:root`).
+Each track has its own pastel (skills = sky, visual = rose, finance = mint). Icons are in `js/icons.js`.
+Motion is kept to three things: the hero blobs and headline reveal, a short fade between screens,
+and the progress segments popping when a lesson is completed. It all respects "reduce motion".
+
 ## Tests
 
 ```bash

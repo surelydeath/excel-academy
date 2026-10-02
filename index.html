@@ -4,26 +4,29 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Excel Académie</title>
-  <meta name="description" content="Apprends Excel et la finance pas à pas : formules, tableaux croisés, états financiers.">
-  <meta name="theme-color" content="#fdeaf3">
+  <meta name="description" content="Apprends Excel et la finance pas à pas : formules, outils pastel, états financiers.">
+  <meta name="theme-color" content="#FBFAFD">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Excel Académie">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23d3b6f3'/%3E%3Ctext x='50' y='66' font-size='54' text-anchor='middle' fill='white'%3E✿%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='12' height='12' rx='3.5' fill='%23BFE0FB'/%3E%3Crect x='18' y='2' width='12' height='12' rx='3.5' fill='%23FAC3DC'/%3E%3Crect x='2' y='18' width='12' height='12' rx='3.5' fill='%23C5EBD2'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="topbar" id="topbar"></header>
+  <div class="atmo" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i></div>
+  <header class="top" id="topbar"></header>
   <main id="app"></main>
   <footer id="footerText"></footer>
+  <nav class="dock" id="dock" aria-label="Navigation"></nav>
 
   <script src="https://cdn.jsdelivr.net/npm/hyperformula@3.4.0/dist/hyperformula.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hyperformula@3.4.0/dist/languages/frFR.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="content/chapters.js"></script>
   <script src="js/i18n.js"></script>
+  <script src="js/icons.js"></script>
   <script src="js/engine.js"></script>
   <script src="js/xlsx-reader.js"></script>
   <script src="js/project-checks.js"></script>
