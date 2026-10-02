@@ -22,7 +22,7 @@ const ProjectChecks = (() => {
       groupsUnfilled: (cells) => `Colore ces cellules : <code>${cells}</code>.`,
       groupsSame: 'Les cases de départ et les cases de résultat ont la même couleur. Choisis deux couleurs différentes.',
       dvList: (range) => `Je ne vois pas de liste déroulante sur <code>${range}</code>. (Données → Validation des données → Liste)`,
-      cfRules: (range, n) => `Il faut au moins ${n} règles de mise en forme conditionnelle sur <code>${range}</code> (une couleur par statut).`,
+      cfRules: (range, n) => (n > 1 ? `Il faut au moins ${n} règles de mise en forme conditionnelle sur <code>${range}</code> (une couleur par statut).` : `Il faut une règle de mise en forme conditionnelle sur <code>${range}</code>. (Accueil → Mise en forme conditionnelle)`),
       feature: {
         conditionalFormatting: 'Je ne vois pas de mise en forme conditionnelle.', dataValidation: 'Je ne vois pas de liste déroulante (validation de données).',
         chart: 'Je ne vois pas de graphique.', freeze: 'Je ne vois pas de volets figés. (Affichage → Figer les volets)',
@@ -53,7 +53,7 @@ const ProjectChecks = (() => {
       groupsUnfilled: (cells) => `Colour these cells: <code>${cells}</code>.`,
       groupsSame: 'The starting cells and the result cells have the same colour. Pick two different colours.',
       dvList: (range) => `I can't see a dropdown list on <code>${range}</code>. (Data → Data Validation → List)`,
-      cfRules: (range, n) => `You need at least ${n} conditional formatting rules on <code>${range}</code> (one colour per status).`,
+      cfRules: (range, n) => (n > 1 ? `You need at least ${n} conditional formatting rules on <code>${range}</code> (one colour per status).` : `You need a conditional formatting rule on <code>${range}</code>. (Home → Conditional Formatting)`),
       feature: {
         conditionalFormatting: 'I can\'t see any conditional formatting.', dataValidation: 'I can\'t see a dropdown list (data validation).',
         chart: 'I can\'t see a chart.', freeze: 'I can\'t see frozen panes. (View → Freeze Panes)',
@@ -174,9 +174,9 @@ const ProjectChecks = (() => {
             outer: for (const s of scenarios) {
               for (const a of cells) {
                 const got = s.got && s.got[a], exp = s.expected[a];
-                if (got === null || got === undefined) { msg = M.unreadable(a); break outer; }
+                if (got === null || got === undefined) { msg = M.unreadable(a) + (check.hint ? ' ' + check.hint[lang] : ''); break outer; }
                 if (Math.abs(got - exp) > tol) {
-                  msg = s.name === 'own' ? M.wrong(a, fmtNum(got, lang, check.display), fmtNum(exp, lang, check.display)) : M.hardcoded(a);
+                  msg = s.name === 'own' ? M.wrong(a, fmtNum(got, lang, check.display), fmtNum(exp, lang, check.display)) + (check.hint ? ' ' + check.hint[lang] : '') : M.hardcoded(a);
                   break outer;
                 }
               }

@@ -95,9 +95,11 @@
         <button class="search-btn" id="searchBtn" aria-label="${esc(t('nbSearchBtn'))}">${ic('search', 17)}<span>${t('nbSearchBtn')}</span><kbd>/</kbd></button>
         <span class="stat" title="XP">${ic('star', 16)}<b>${state.xp}</b></span>
         <span class="stat" title="${esc(t('streakWord'))}">${ic('flame', 16)}<b>${state.streak.count}</b></span>
+        <button class="icon-btn" data-sound></button>
         <button class="lang lang-top" data-lang aria-label="Language">${state.lang === 'fr' ? '<b>FR</b> / EN' : 'FR / <b>EN</b>'}</button>
       </div>`;
     $('#searchBtn').onclick = () => App.openHelp({});
+    App.sound.bind($('#topbar'));
     bindLang();
   }
   function refreshChrome() { renderSide(); renderTop(); }

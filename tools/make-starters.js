@@ -13,20 +13,20 @@ const PASTEL = { pink: 'FFF9B9D0', blue: 'FFA8D3F5', peach: 'FFFDE9D8', green: '
 const LABELS = {
   fr: {
     sheet: 'Calculateur', title: 'Calculateur de prix', head: ['Élément', 'Valeur'],
-    rows: ['Coût des matières', 'Temps de fabrication (min)', 'Taux horaire', 'Autres coûts (emballage…)', 'Taux de marge souhaité', 'TVA'],
-    out: ['Coût de revient', 'Prix de vente HT', 'Prix de vente TTC', 'Bénéfice par produit', 'Taux de marque'],
+    rows: ['Coût des matières', 'Temps de fabrication (min)', 'Taux horaire', 'Autres coûts (emballage…)', 'Taux de marge souhaité', 'Taxes de vente (TPS + TVQ)'],
+    out: ['Coût de revient', 'Prix de vente avant taxes', 'Prix de vente taxes incluses', 'Bénéfice par produit', 'Taux de marque'],
     money: '#,##0.00\\ "$"',
   },
   en: {
     sheet: 'Calculator', title: 'Price calculator', head: ['Item', 'Value'],
-    rows: ['Material cost', 'Production time (min)', 'Hourly rate', 'Other costs (packaging…)', 'Desired markup', 'VAT'],
-    out: ['Cost price', 'Selling price excl. VAT', 'Selling price incl. VAT', 'Profit per product', 'Margin rate'],
+    rows: ['Material cost', 'Production time (min)', 'Hourly rate', 'Other costs (packaging…)', 'Desired markup', 'Sales tax (GST + QST)'],
+    out: ['Cost price', 'Selling price before tax', 'Selling price with tax', 'Profit per product', 'Margin rate'],
     money: '"$"#,##0.00',
   },
 };
-const INPUTS = [5.5, 30, 15, 1.58, 0.5, 0.2];
+const INPUTS = [5.5, 30, 15, 1.58, 0.5, 0.14975];
 // Model results for the default inputs (cached values so viewers that don't recalc still show numbers)
-const COST = 5.5 + (30 / 60) * 15 + 1.58, HT = COST * 1.5, TTC = HT * 1.2;
+const COST = 5.5 + (30 / 60) * 15 + 1.58, HT = COST * 1.5, TTC = HT * 1.14975;
 
 function base(lang) {
   const L = LABELS[lang];
@@ -58,7 +58,7 @@ async function model(lang) {
   Object.keys(f).forEach((a) => { ws.getCell(a).value = { formula: f[a], result: r[a] }; });
 
   ['B3', 'B5', 'B6', 'B10', 'B11', 'B12', 'B13'].forEach((a) => { ws.getCell(a).numFmt = L.money; });
-  ['B7', 'B8'].forEach((a) => { ws.getCell(a).numFmt = '0%'; });
+  ws.getCell('B7').numFmt = '0%'; ws.getCell('B8').numFmt = '0.0##%';
   ws.getCell('B14').numFmt = '0.0%';
   for (let row = 3; row <= 8; row++) ws.getCell('B' + row).fill = fill(PASTEL.peach);
   for (let row = 10; row <= 14; row++) { ws.getCell('B' + row).fill = fill(PASTEL.green); ws.getCell('A' + row).font = { bold: row === 12 }; }
@@ -68,7 +68,7 @@ async function model(lang) {
     ref: 'B14',
     rules: [{ type: 'cellIs', operator: 'lessThan', formulae: [0.2], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: 'FFFDE0EA' } } } }],
   });
-  ws.getCell('B8').dataValidation = { type: 'list', allowBlank: false, formulae: ['"0.055,0.1,0.2"'] };
+  ws.getCell('B8').dataValidation = { type: 'list', allowBlank: false, formulae: ['"0.14975,0.05,0.13,0.15"'] };
 
   await wb.xlsx.writeFile(path.join(OUT, `calculateur-prix-modele-${lang}.xlsx`));
 }

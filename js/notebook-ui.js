@@ -8,13 +8,42 @@
   const search = (q) => Search.run(q, state.lang, NOTEBOOK, catOrder);
 
   /* ---------------------------------------------------------- one entry (shared by page and drawer) */
+  // "What you need" + steps shown one at a time + common mistakes
+  const needsHTML = (e) => (e.needs && e.needs.length ? `<div class="nb-needs"><b>${ic('check', 16)}${t('nbNeeds')}</b><ul>${e.needs.map((x) => `<li>${L(x)}</li>`).join('')}</ul></div>` : '');
+  const stepsHTML = (e) => (e.steps && e.steps.length ? `
+    <section class="stepper" data-i="0" data-n="${e.steps.length}">
+      <div class="st-head"><h3>${t('nbSteps')}</h3><button class="btn text sm st-all" type="button">${t('nbShowAll')}</button></div>
+      <ol class="st-list">${e.steps.map((s, k) => `<li class="st-step ${k === 0 ? 'cur' : ''}"><span class="st-n">${k + 1}</span><div class="st-body"><b>${esc(L(s.t))}</b><div class="prose">${L(s.p)}</div></div></li>`).join('')}</ol>
+      <div class="st-nav"><button class="btn text sm st-prev" type="button" disabled>${ic('back', 15)}${t('slidePrev')}</button>
+        <span class="dots">${e.steps.map((_, k) => `<i class="dd ${k === 0 ? 'cur' : ''}"></i>`).join('')}</span>
+        <button class="btn primary sm st-next" type="button">${t('slideNext')}${ic('next', 15)}</button></div>
+    </section>` : '');
+  const trapsHTML = (e) => (e.traps && e.traps.length ? `<div class="note"><span class="ic-wrap">${ic('alert', 18)}</span><div><b>${t('nbTraps')}</b><ul class="traps">${e.traps.map((x) => `<li>${L(x)}</li>`).join('')}</ul></div></div>` : '');
+  function stepTo(sec, i) {
+    const n = +sec.dataset.n; i = Math.max(0, Math.min(n - 1, i)); sec.dataset.i = i;
+    $$('.st-step', sec).forEach((li, k) => li.classList.toggle('cur', k === i));
+    $$('.dd', sec).forEach((d, k) => { d.className = 'dd ' + (k === i ? 'cur' : k < i ? 'on' : ''); });
+    $('.st-prev', sec).disabled = i === 0; $('.st-next', sec).disabled = i === n - 1;
+  }
+  document.addEventListener('click', (ev) => {
+    const sec = ev.target.closest && ev.target.closest('.stepper'); if (!sec) return;
+    const i = +sec.dataset.i;
+    if (ev.target.closest('.st-next')) { App.sound.play('next'); stepTo(sec, i + 1); }
+    else if (ev.target.closest('.st-prev')) { App.sound.play('back'); stepTo(sec, i - 1); }
+    else if (ev.target.closest('.st-all')) {
+      const all = sec.classList.toggle('all');
+      ev.target.closest('.st-all').textContent = all ? t('nbOneByOne') : t('nbShowAll');
+    }
+  });
   function entryDetail(e) {
     const lessons = (e.lessons || []).map((id) => App.lessonOf(id)).filter(Boolean);
     return `
       ${e.syntax ? `<div class="syntax"><span>${t('nbSyntax')}</span><code>${esc(L(e.syntax))}</code></div>` : ''}
       <div class="prose">${L(e.body)}</div>
+      ${needsHTML(e)}${stepsHTML(e)}
       ${e.example ? `<p class="example"><b>${t('nbExample')}</b> ${L(e.example)}</p>` : ''}
       ${e.tip ? `<div class="note tip"><span class="ic-wrap">${ic('bulb', 18)}</span><div>${L(e.tip)}</div></div>` : ''}
+      ${trapsHTML(e)}
       ${lessons.length ? `<div class="related"><span>${t('nbRelated')}</span>${lessons.map((l) => `<a class="chip" href="#/l/${l.id}" data-close-drawer>${esc(L(l.title))}</a>`).join('')}</div>` : ''}`;
   }
   function entryAccordion(e, open) {

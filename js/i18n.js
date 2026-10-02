@@ -2,6 +2,10 @@
 const STRINGS = {
   fr: {
     appName: 'Excel Académie',
+    slideNext: 'Suivant', slidePrev: 'Précédent', slideN: (i, n) => i + ' / ' + n, pressEnter: 'Appuyer sur Entrée', replay: 'Rejouer', slideTyping: 'La formule s\'écrit…', slideEntered: 'Entrée appuyée : voilà le résultat',
+    tryEdit: 'À toi : change un nombre dans le tableau', tapCell: 'Touche une cellule pour voir ce qu\'elle contient', beatNext: 'Suite', questionsWord: 'questions', quizHelpNote: 'Un doute ? « Besoin d\'aide ? » ouvre le carnet.', beatAll: 'Tout voir',
+    nbNeeds: 'Ce qu\'il te faut', nbSteps: 'Pas à pas', nbShowAll: 'Tout voir', nbOneByOne: 'Une étape à la fois', nbTraps: 'Erreurs fréquentes',
+    soundOn: 'Sons activés : toucher pour couper', soundOff: 'Sons coupés : toucher pour activer',
     xp: 'XP', streakDays: (n) => (n > 1 ? n + ' jours' : n + ' jour'),
     welcome: 'Bienvenue',
     welcomeBack: 'Re-bonjour',
@@ -105,6 +109,10 @@ const STRINGS = {
   },
   en: {
     appName: 'Excel Academy',
+    slideNext: 'Next', slidePrev: 'Previous', slideN: (i, n) => i + ' / ' + n, pressEnter: 'Press Enter', replay: 'Replay', slideTyping: 'The formula is being typed…', slideEntered: 'Enter pressed: here is the result',
+    tryEdit: 'Your turn: change a number in the table', tapCell: 'Tap a cell to see what it holds', beatNext: 'Continue', questionsWord: 'questions', quizHelpNote: 'Stuck? "Need help?" opens the notebook.', beatAll: 'Show all',
+    nbNeeds: 'What you need', nbSteps: 'Step by step', nbShowAll: 'Show all', nbOneByOne: 'One step at a time', nbTraps: 'Common mistakes',
+    soundOn: 'Sound on: tap to mute', soundOff: 'Sound off: tap to unmute',
     xp: 'XP', streakDays: (n) => n + (n > 1 ? ' days' : ' day'),
     welcome: 'Welcome',
     welcomeBack: 'Welcome back',

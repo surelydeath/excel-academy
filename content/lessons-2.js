@@ -318,7 +318,7 @@
             T('Il supprime la formule', 'It deletes the formula'),
           ],
           answer: 1,
-          explain: T('C\'est le raccourci pour verrouiller une cellule avec les $, comme tu l\'as fait pour la TVA.', 'It\'s the shortcut to lock a cell with $, as you did for VAT.'),
+          explain: T('C\'est le raccourci pour verrouiller une cellule avec les $, comme tu l\'as fait pour la TPS et la TVQ.', 'It\'s the shortcut to lock a cell with $, as you did for GST and QST.'),
         },
         {
           q: T('Ctrl + 1 ouvre…', 'Ctrl + 1 opens…'),
@@ -449,11 +449,11 @@
             `<p>You'll see 10 quotes (rows 8 to 17), a summary block at the top (<code>B3:B6</code> and <code>E3:E5</code>, empty), columns <code>G</code> and <code>H</code> to fill in, and a small list of statuses in <code>K8:K10</code>. Save it under a new name.</p>`),
         },
         {
-          title: T('Calcule le montant TTC (G8:G17)', 'Calculate the amount incl. VAT (G8:G17)'),
+          title: T('Calcule le montant taxes incluses (G8:G17)', 'Calculate the amount with tax (G8:G17)'),
           body: T(
-            `<p>Dans <code>G8</code> : montant HT × (1 + TVA). Puis recopie jusqu'à <code>G17</code> avec la poignée de recopie.</p>
+            `<p>Dans <code>G8</code> : montant avant taxes × (1 + taux de taxes). Puis recopie jusqu'à <code>G17</code> avec la poignée de recopie.</p>
              <details><summary>Indice</summary><p><code>=E8*(1+F8)</code></p></details>`,
-            `<p>In <code>G8</code>: amount excl. VAT × (1 + VAT). Then copy down to <code>G17</code> with the fill handle.</p>
+            `<p>In <code>G8</code>: amount before tax × (1 + tax rate). Then copy down to <code>G17</code> with the fill handle.</p>
              <details><summary>Hint</summary><p><code>=E8*(1+F8)</code></p></details>`),
         },
         {
@@ -471,11 +471,11 @@
           body: T(
             `<p>Compte les devis et additionne les montants. Astuce : le critère de <code>NB.SI</code> peut être <strong>une cellule</strong> (<code>K8</code>, <code>K9</code>, <code>K10</code>) plutôt qu'un mot tapé.</p>
              <p>• <code>B3</code> : nombre de devis · <code>B4</code> : acceptés · <code>B5</code> : en attente · <code>B6</code> : refusés<br>
-                • <code>E3</code> : taux de conversion (acceptés ÷ total) · <code>E4</code> : total TTC · <code>E5</code> : total TTC des devis acceptés</p>
+                • <code>E3</code> : taux de conversion (acceptés ÷ total) · <code>E4</code> : total taxes incluses · <code>E5</code> : total taxes incluses des devis acceptés</p>
              <details><summary>Indice</summary><p><code>B3</code> : <code>=NBVAL(A8:A17)</code><br><code>B4</code> : <code>=NB.SI(I8:I17;K8)</code><br><code>E3</code> : <code>=B4/B3</code><br><code>E4</code> : <code>=SOMME(G8:G17)</code><br><code>E5</code> : <code>=SOMME.SI(I8:I17;K8;G8:G17)</code></p></details>`,
             `<p>Count the quotes and add up the amounts. Tip: the <code>COUNTIF</code> criterion can be <strong>a cell</strong> (<code>K8</code>, <code>K9</code>, <code>K10</code>) rather than a typed word.</p>
              <p>• <code>B3</code>: number of quotes · <code>B4</code>: accepted · <code>B5</code>: pending · <code>B6</code>: declined<br>
-                • <code>E3</code>: conversion rate (accepted ÷ total) · <code>E4</code>: total incl. VAT · <code>E5</code>: total incl. VAT of accepted quotes</p>
+                • <code>E3</code>: conversion rate (accepted ÷ total) · <code>E4</code>: total with tax · <code>E5</code>: total with tax of accepted quotes</p>
              <details><summary>Hint</summary><p><code>B3</code>: <code>=COUNTA(A8:A17)</code><br><code>B4</code>: <code>=COUNTIF(I8:I17,K8)</code><br><code>E3</code>: <code>=B4/B3</code><br><code>E4</code>: <code>=SUM(G8:G17)</code><br><code>E5</code>: <code>=SUMIF(I8:I17,K8,G8:G17)</code></p></details>`),
         },
         {
@@ -528,7 +528,7 @@
         const o = {};
         for (let r = 8; r <= 17; r++) {
           o['C' + r] = 45000 + r * k; o['D' + r] = 10 + ((r * k) % 50); o['E' + r] = 50 * r + k * 13;
-          o['F' + r] = (r + k) % 3 === 0 ? 0.055 : (r + k) % 2 ? 0.1 : 0.2;
+          o['F' + r] = (r + k) % 3 === 0 ? 0.05 : (r + k) % 2 ? 0.13 : 0.14975;
           o['I' + r] = '@K' + (8 + ((r + k) % 3));
         }
         return o;
@@ -547,7 +547,7 @@
         return o;
       },
       checks: [
-        { id: 'c1', group: 'calc', kind: 'calc', cells: 'G8:G17', display: 'money', label: T('Montant TTC (G8:G17)', 'Amount incl. VAT (G8:G17)') },
+        { id: 'c1', group: 'calc', kind: 'calc', cells: 'G8:G17', display: 'money', label: T('Montant taxes incluses (G8:G17)', 'Amount with tax (G8:G17)') },
         { id: 'c2', group: 'calc', kind: 'calc', cells: 'H8:H17', display: 'num', label: T('Date limite (H8:H17)', 'Deadline (H8:H17)') },
         { id: 'c3', group: 'calc', kind: 'calc', cells: 'B3:B6', display: 'num', label: T('Nombres de devis par statut (B3:B6)', 'Number of quotes by status (B3:B6)') },
         { id: 'c4', group: 'calc', kind: 'calc', cells: 'E3', display: 'pct', tol: 0.0005, label: T('Taux de conversion (E3)', 'Conversion rate (E3)') },
@@ -573,10 +573,9 @@
   /* ---------------------------------------------------------------- Financial models (finance) */
   chapter('finprojects').levelNames = { 1: T('Ratios', 'Ratios'), 2: T('Gestion', 'Management'), 3: T('Prévisions', 'Forecasting') };
   chapter('finprojects').roadmap = [
-    T('Budget mensuel avec objectifs', 'Monthly budget with targets'),
     T('Compte de résultat prévisionnel', 'Forecast income statement'),
     T('Plan de trésorerie sur 12 mois (projet Excel)', '12-month cash-flow plan (Excel project)'),
-    T('Suivi de TVA et d\'impôts estimés', 'VAT and estimated-tax tracker'),
+    T('Suivi de TPS/TVQ et d\'impôts estimés', 'GST/QST and estimated-tax tracker'),
     T('Tableau de bord comptable (comme sur ton modèle)', 'Accounting dashboard (like your template)'),
   ];
   addLessons('finprojects', [
@@ -728,6 +727,143 @@
                  `$1,000 at 5% for 3 years gives $1,157.63, not $1,150 (which would be 3 × 5%). The $7.63 difference is interest on interest. The longer the period, the more the gap grows.`),
       pro: T('Astuce de pro : Excel a des fonctions financières toutes prêtes (<code>VC</code>, <code>VA</code>, <code>VPM</code>…). Comprendre la formule à la main te permet de les utiliser sans te tromper.',
              'Pro tip: Excel has ready-made financial functions (<code>FV</code>, <code>PV</code>, <code>PMT</code>…). Understanding the formula by hand lets you use them without mistakes.'),
+    },
+  ]);
+  /* ---------------------------------------------------------------- Finance project: monthly budget */
+  const B = (col) => range(col, 6, 12);
+  addLessons('finprojects', [
+    {
+      id: 'm6', type: 'build', level: 2, xp: 50, requires: ['f2', 'f6', 'f8'],
+      title: T('Projet : ton budget mensuel', 'Project: your monthly budget'),
+      intro: T(
+        `<p>Un budget, c'est le premier outil de finance qu'on construit. Tu y compares ce que tu avais <strong>prévu</strong> de dépenser à ce que tu as <strong>vraiment dépensé</strong>, catégorie par catégorie.</p>
+         <p>Dans ce projet : le <strong>reste</strong> de chaque catégorie, la part de ton revenu qu'elle représente (avec une cellule <strong>verrouillée</strong> avec des $), les totaux, ton <strong>taux d'épargne</strong>, et une alerte rose quand tu dépasses un budget.</p>`,
+        `<p>A budget is the first finance tool you build. You compare what you <strong>planned</strong> to spend with what you <strong>actually spent</strong>, category by category.</p>
+         <p>In this project: the <strong>amount left</strong> in each category, the share of your income it represents (with a cell <strong>locked</strong> with $), the totals, your <strong>savings rate</strong>, and a pink alert when you go over a budget.</p>`),
+      files: {
+        start: { fr: 'assets/budget-depart-fr.xlsx', en: 'assets/budget-depart-en.xlsx' },
+        model: { fr: 'assets/budget-modele-fr.xlsx', en: 'assets/budget-modele-en.xlsx' },
+      },
+      steps: [
+        {
+          title: T('Ouvre le fichier de départ', 'Open the starter file'),
+          body: T(
+            `<p>Tu y vois ton <strong>revenu du mois</strong> en <code>B3</code> et 7 catégories (lignes 6 à 12) avec le budget prévu (colonne B) et ce que tu as dépensé (colonne C).</p>
+             <p>Il manque tout ce qui se calcule : les colonnes <code>D</code> (Reste) et <code>E</code> (% du revenu), la ligne <strong>Total</strong> (13) et les trois résumés (<code>B15:B17</code>).</p>
+             <p>Enregistre-le tout de suite sous un nouveau nom : <kbd>F12</kbd> sous Windows, ou <em>Fichier → Enregistrer une copie</em> sur iPad.</p>`,
+            `<p>You'll see your <strong>income for the month</strong> in <code>B3</code> and 7 categories (rows 6 to 12) with the planned budget (column B) and what you spent (column C).</p>
+             <p>Everything that calculates is missing: columns <code>D</code> (Left) and <code>E</code> (% of income), the <strong>Total</strong> row (13) and the three summaries (<code>B15:B17</code>).</p>
+             <p>Save it under a new name right away: <kbd>F12</kbd> on Windows, or <em>File → Save a Copy</em> on iPad.</p>`),
+        },
+        {
+          title: T('Calcule le reste de chaque catégorie (D6:D12)', 'Work out what is left in each category (D6:D12)'),
+          body: T(
+            `<p>Reste = budget prévu − dépensé. Un reste <strong>négatif</strong> veut dire que tu as dépassé le budget.</p>
+             <p>Écris la formule en <code>D6</code>, puis recopie-la jusqu'à <code>D12</code> (double-clique le petit carré en bas à droite de la cellule).</p>
+             <details><summary>Indice</summary><p><code>D6</code> : <code>=B6-C6</code></p></details>`,
+            `<p>Left = planned budget − spent. A <strong>negative</strong> amount means you went over budget.</p>
+             <p>Write the formula in <code>D6</code>, then copy it down to <code>D12</code> (double-click the small square at the cell's bottom-right corner).</p>
+             <details><summary>Hint</summary><p><code>D6</code>: <code>=B6-C6</code></p></details>`),
+        },
+        {
+          title: T('Calcule la part du revenu (E6:E12)', 'Work out the share of income (E6:E12)'),
+          body: T(
+            `<p>Part du revenu = dépensé ÷ revenu du mois. Le revenu est toujours dans <code>B3</code> : il faut le <strong>verrouiller</strong> avec des <code>$</code> pour qu'il ne glisse pas quand tu recopies la formule.</p>
+             <p>Pendant que tu écris <code>B3</code>, appuie sur <kbd>F4</kbd> : ça donne <code>$B$3</code>.</p>
+             <details><summary>Indice</summary><p><code>E6</code> : <code>=C6/$B$3</code></p></details>`,
+            `<p>Share of income = spent ÷ income for the month. The income is always in <code>B3</code>: you need to <strong>lock</strong> it with <code>$</code> so it doesn't slide when you copy the formula.</p>
+             <p>While typing <code>B3</code>, press <kbd>F4</kbd>: it gives <code>$B$3</code>.</p>
+             <details><summary>Hint</summary><p><code>E6</code>: <code>=C6/$B$3</code></p></details>`),
+        },
+        {
+          title: T('Ajoute la ligne Total (ligne 13)', 'Add the Total row (row 13)'),
+          body: T(
+            `<p>Dans la ligne <strong>Total</strong> :</p>
+             <p>• <code>B13</code> : la somme des budgets prévus<br>• <code>C13</code> : la somme des dépenses<br>• <code>D13</code> : le reste total (prévu − dépensé)<br>• <code>E13</code> : le total dépensé en pourcentage du revenu</p>
+             <details><summary>Indice</summary><p><code>B13</code> : <code>=SOMME(B6:B12)</code> · <code>C13</code> : <code>=SOMME(C6:C12)</code><br><code>D13</code> : <code>=B13-C13</code> · <code>E13</code> : <code>=C13/B3</code></p></details>`,
+            `<p>In the <strong>Total</strong> row:</p>
+             <p>• <code>B13</code>: the sum of the planned budgets<br>• <code>C13</code>: the sum of the spending<br>• <code>D13</code>: the total left (planned − spent)<br>• <code>E13</code>: total spending as a percentage of income</p>
+             <details><summary>Hint</summary><p><code>B13</code>: <code>=SUM(B6:B12)</code> · <code>C13</code>: <code>=SUM(C6:C12)</code><br><code>D13</code>: <code>=B13-C13</code> · <code>E13</code>: <code>=C13/B3</code></p></details>`),
+        },
+        {
+          title: T('Remplis les trois résumés (B15:B17)', 'Fill in the three summaries (B15:B17)'),
+          body: T(
+            `<p>• <code>B15</code> <strong>Reste en fin de mois</strong> : ton revenu moins tout ce que tu as dépensé.<br>• <code>B16</code> <strong>Taux d'épargne</strong> : la part de ton revenu qui va dans l'épargne (ligne 11).<br>• <code>B17</code> <strong>Catégories dépassées</strong> : combien de restes sont négatifs.</p>
+             <p>Pour compter les négatifs, <code>NB.SI</code> accepte une condition entre guillemets : <code>"&lt;0"</code>.</p>
+             <details><summary>Indice</summary><p><code>B15</code> : <code>=B3-C13</code><br><code>B16</code> : <code>=C11/B3</code><br><code>B17</code> : <code>=NB.SI(D6:D12;"&lt;0")</code></p></details>`,
+            `<p>• <code>B15</code> <strong>Left at month end</strong>: your income minus everything you spent.<br>• <code>B16</code> <strong>Savings rate</strong>: the share of your income that goes into savings (row 11).<br>• <code>B17</code> <strong>Categories over budget</strong>: how many "left" amounts are negative.</p>
+             <p>To count the negatives, <code>COUNTIF</code> accepts a condition in quotes: <code>"&lt;0"</code>.</p>
+             <details><summary>Hint</summary><p><code>B15</code>: <code>=B3-C13</code><br><code>B16</code>: <code>=C11/B3</code><br><code>B17</code>: <code>=COUNTIF(D6:D12,"&lt;0")</code></p></details>`),
+        },
+        {
+          title: T('Mets les bons formats ($ et %)', 'Apply the right formats ($ and %)'),
+          body: T(
+            `<p>En dollars : <code>B3</code>, <code>B6:D13</code> et <code>B15</code>. En pourcentage : <code>E6:E13</code> et <code>B16</code>.</p>
+             <p><kbd>Ctrl</kbd> + clic pour sélectionner plusieurs zones, puis <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Nombre → Monétaire → $</em>, ou le bouton <strong>%</strong> de l'onglet <em>Accueil</em>.</p>
+             <p><em>iPad :</em> sélectionne les cases, onglet <em>Accueil</em>, puis le menu <em>Format numérique</em>.</p>`,
+            `<p>In dollars: <code>B3</code>, <code>B6:D13</code> and <code>B15</code>. As a percentage: <code>E6:E13</code> and <code>B16</code>.</p>
+             <p><kbd>Ctrl</kbd> + click to select several areas, then <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Number → Currency → $</em>, or the <strong>%</strong> button on the <em>Home</em> tab.</p>
+             <p><em>iPad:</em> select the cells, <em>Home</em> tab, then the <em>Number format</em> menu.</p>`),
+        },
+        {
+          title: T('Colore : où on tape, ce qui se calcule', 'Colour: where you type, what calculates'),
+          body: T(
+            `<p>Titre <code>A1</code> en <strong>gras</strong> et plus grand. En-tête <code>A5:E5</code> avec une couleur de fond.</p>
+             <p>Puis la règle d'or : les cases où <strong>tu tapes</strong> (<code>B3</code>, <code>B6:C12</code>) dans une couleur claire, et celles qui <strong>se calculent</strong> (<code>D6:E13</code>, <code>B13:C13</code>, <code>B15:B17</code>) dans une <strong>autre</strong>.</p>`,
+            `<p>Title <code>A1</code> in <strong>bold</strong> and larger. Header <code>A5:E5</code> with a fill colour.</p>
+             <p>Then the golden rule: the cells where <strong>you type</strong> (<code>B3</code>, <code>B6:C12</code>) in one light colour, and the ones that <strong>calculate</strong> (<code>D6:E13</code>, <code>B13:C13</code>, <code>B15:B17</code>) in a <strong>different</strong> one.</p>`),
+        },
+        {
+          title: T('Une alerte rose quand tu dépasses', 'A pink alert when you go over'),
+          body: T(
+            `<p>Sélectionne <code>D6:D12</code> → <em>Accueil → Mise en forme conditionnelle → Règles de mise en surbrillance → Inférieur à…</em> → <code>0</code> → remplissage rose.</p>
+             <p>Change une dépense pour tester : dès que le reste passe sous zéro, la case devient rose toute seule.</p>`,
+            `<p>Select <code>D6:D12</code> → <em>Home → Conditional Formatting → Highlight Cells Rules → Less Than…</em> → <code>0</code> → pink fill.</p>
+             <p>Change an expense to test: as soon as the amount left drops below zero, the cell turns pink by itself.</p>`),
+        },
+        {
+          title: T('Bonus : va plus loin', 'Bonus: go further'),
+          body: T(
+            `<p>• <strong>Fige les volets</strong> sous l'en-tête : clique en <code>A6</code> puis <em>Affichage → Figer les volets</em>.<br>• Ajoute un <strong>graphique</strong> en barres qui compare le prévu et le dépensé (sélectionne <code>A5:C12</code> → <em>Insertion → Graphique</em>).</p>`,
+            `<p>• <strong>Freeze the panes</strong> under the header: click <code>A6</code> then <em>View → Freeze Panes</em>.<br>• Add a <strong>bar chart</strong> comparing planned and spent (select <code>A5:C12</code> → <em>Insert → Chart</em>).</p>`),
+        },
+      ],
+      inputs: ['B3', ...B('B'), ...B('C')],
+      scenarios: [
+        { B3: 4000, B6: 1200, C6: 1250, B7: 500, C7: 430, B8: 200, C8: 260, B9: 100, C9: 90, B10: 250, C10: 240, B11: 600, C11: 650, B12: 100, C12: 180 },
+        { B3: 2500, B6: 900, C6: 900, B7: 300, C7: 280, B8: 100, C8: 110, B9: 90, C9: 95, B10: 80, C10: 20, B11: 200, C11: 100, B12: 50, C12: 49 },
+      ],
+      model: (i) => {
+        const o = {}; let plan = 0, spent = 0, over = 0;
+        for (let r = 6; r <= 12; r++) {
+          o['D' + r] = i['B' + r] - i['C' + r]; o['E' + r] = i['C' + r] / i.B3;
+          plan += i['B' + r]; spent += i['C' + r]; if (i['B' + r] - i['C' + r] < 0) over++;
+        }
+        Object.assign(o, { B13: plan, C13: spent, D13: plan - spent, E13: spent / i.B3, B15: i.B3 - spent, B16: i.C11 / i.B3, B17: over });
+        return o;
+      },
+      checks: [
+        { id: 'c1', group: 'calc', kind: 'calc', cells: 'D6:D12', display: 'money', label: T('Reste de chaque catégorie (D6:D12)', 'Amount left in each category (D6:D12)') },
+        { id: 'c2', group: 'calc', kind: 'calc', cells: 'E6:E12', display: 'pct', tol: 0.0005, hint: T('Astuce : le revenu doit rester en <code>$B$3</code> sur toutes les lignes (appuie sur F4 en écrivant B3).', 'Tip: the income must stay at <code>$B$3</code> on every row (press F4 while typing B3).'), label: T('Part du revenu (E6:E12)', 'Share of income (E6:E12)') },
+        { id: 'c3', group: 'calc', kind: 'calc', cells: 'B13:D13', display: 'money', label: T('Totaux (B13:D13)', 'Totals (B13:D13)') },
+        { id: 'c4', group: 'calc', kind: 'calc', cells: 'E13', display: 'pct', tol: 0.0005, label: T('Total dépensé en % du revenu (E13)', 'Total spent as % of income (E13)') },
+        { id: 'c5', group: 'calc', kind: 'calc', cells: 'B15', display: 'money', label: T('Reste en fin de mois (B15)', 'Left at month end (B15)') },
+        { id: 'c6', group: 'calc', kind: 'calc', cells: 'B16', display: 'pct', tol: 0.0005, label: T('Taux d\'épargne (B16)', 'Savings rate (B16)') },
+        { id: 'c7', group: 'calc', kind: 'calc', cells: 'B17', display: 'num', label: T('Catégories dépassées (B17)', 'Categories over budget (B17)') },
+        { id: 'd1', group: 'design', kind: 'format', type: 'money', cells: ['B3', 'B6:D13', 'B15'], label: T('Les montants sont en dollars $', 'Amounts are formatted in dollars $') },
+        { id: 'd2', group: 'design', kind: 'format', type: 'percent', cells: ['E6:E13', 'B16'], label: T('Les taux sont en pourcentage %', 'Rates are formatted as percentages %') },
+        { id: 'd3', group: 'design', kind: 'bold', cells: ['A1'], label: T('Le titre est en gras', 'The title is bold') },
+        { id: 'd4', group: 'design', kind: 'fill', cells: ['A5:E5'], label: T('L\'en-tête a une couleur de fond', 'The header has a fill colour') },
+        { id: 'd5', group: 'design', kind: 'fillGroups', groups: [['B3', 'B6:C12'], ['D6:E12', 'B13:E13', 'B15:B17']], label: T('Cases à remplir et cases calculées : deux couleurs différentes', 'Cells to fill in and calculated cells: two different colours') },
+        { id: 'd6', group: 'design', kind: 'cfRules', range: 'D6:D12', min: 1, label: T('Alerte de couleur quand le reste est négatif', 'Colour alert when the amount left is negative') },
+        { id: 'b1', group: 'bonus', bonus: true, kind: 'feature', feature: 'freeze', label: T('Volets figés', 'Frozen panes') },
+        { id: 'b2', group: 'bonus', bonus: true, kind: 'feature', feature: 'chart', label: T('Graphique prévu vs dépensé', 'Planned vs spent chart') },
+      ],
+      explain: T(
+        `Ton budget réagit maintenant tout seul : change une dépense et le reste, le pourcentage, les totaux, le taux d'épargne et l'alerte rose suivent. Le <code>$B$3</code> est la clé : un seul revenu, utilisé par toutes les lignes sans jamais glisser.`,
+        `Your budget now reacts by itself: change an expense and the amount left, the percentage, the totals, the savings rate and the pink alert all follow. <code>$B$3</code> is the key: one income, used by every row without ever sliding.`),
+      pro: T('Astuce de pro : une règle simple pour un budget, c\'est 50 % besoins, 30 % envies, 20 % épargne. Compare-la à ton <strong>taux d\'épargne</strong> : c\'est un bon point de départ, à adapter à ta situation.',
+             'Pro tip: a simple budgeting rule is 50% needs, 30% wants, 20% savings. Compare it to your <strong>savings rate</strong>: a good starting point, to adapt to your situation.'),
     },
   ]);
 })();

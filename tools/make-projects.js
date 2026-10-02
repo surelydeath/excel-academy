@@ -20,26 +20,26 @@ const FMT = {
 
 /* ------------------------------------------------------------------ quote tracker */
 const QUOTES = [
-  // client, date, validity (days), amount excl. VAT, VAT rate, status index (0 accepted, 1 pending, 2 declined)
-  ['Atelier Lumen', [2025, 1, 6], 30, 2440, 0.2, 2],
-  ['Studio Nomade', [2025, 1, 14], 30, 1265, 0.2, 0],
-  ['Maison Ardoise', [2025, 1, 20], 60, 1890, 0.1, 0],
-  ['Nova & Co', [2025, 2, 3], 30, 246, 0.2, 1],
-  ['Les Petites Pixels', [2025, 2, 10], 15, 452.5, 0.2, 2],
-  ['Julien Moreau', [2025, 2, 24], 45, 3200, 0.2, 1],
-  ['Camille Richard', [2025, 3, 4], 30, 980, 0.055, 0],
-  ['Echo Concept', [2025, 3, 18], 60, 1500, 0.2, 1],
-  ['Sophie Lambert', [2025, 3, 27], 15, 610, 0.2, 2],
-  ['Studio Equinoxe', [2025, 4, 8], 30, 2150, 0.2, 1],
+  // client, date, validity (days), amount before tax, tax rate (14.975% QC, 5% GST only, 13% ON), status index (0 accepted, 1 pending, 2 declined)
+  ['Atelier Lumen', [2025, 1, 6], 30, 2440, 0.14975, 2],
+  ['Studio Nomade', [2025, 1, 14], 30, 1265, 0.14975, 0],
+  ['Maison Ardoise', [2025, 1, 20], 60, 1890, 0.05, 0],
+  ['Nova & Co', [2025, 2, 3], 30, 246, 0.14975, 1],
+  ['Les Petites Pixels', [2025, 2, 10], 15, 452.5, 0.14975, 2],
+  ['Julien Moreau', [2025, 2, 24], 45, 3200, 0.14975, 1],
+  ['Camille Richard', [2025, 3, 4], 30, 980, 0.13, 0],
+  ['Echo Concept', [2025, 3, 18], 60, 1500, 0.14975, 1],
+  ['Sophie Lambert', [2025, 3, 27], 15, 610, 0.14975, 2],
+  ['Studio Equinoxe', [2025, 4, 8], 30, 2150, 0.14975, 1],
 ];
 const QL = {
   fr: {
-    sheet: 'Devis', title: 'Suivi de devis', sum: ['Nombre de devis', 'Devis acceptés', 'En attente', 'Refusés'], sum2: ['Taux de conversion', 'Montant total TTC', 'Montant accepté TTC'],
-    head: ['N°', 'Client', 'Date du devis', 'Validité (jours)', 'Montant HT', 'TVA', 'Montant TTC', 'Date limite', 'Statut'], legend: 'Statuts', statuses: ['Accepté', 'En attente', 'Refusé'],
+    sheet: 'Devis', title: 'Suivi de devis', sum: ['Nombre de devis', 'Devis acceptés', 'En attente', 'Refusés'], sum2: ['Taux de conversion', 'Montant total taxes incluses', 'Montant accepté taxes incluses'],
+    head: ['N°', 'Client', 'Date du devis', 'Validité (jours)', 'Montant avant taxes', 'Taxes', 'Montant taxes incluses', 'Date limite', 'Statut'], legend: 'Statuts', statuses: ['Accepté', 'En attente', 'Refusé'],
   },
   en: {
-    sheet: 'Quotes', title: 'Quote tracker', sum: ['Number of quotes', 'Accepted quotes', 'Pending', 'Declined'], sum2: ['Conversion rate', 'Total incl. VAT', 'Accepted incl. VAT'],
-    head: ['No.', 'Client', 'Quote date', 'Validity (days)', 'Amount excl. VAT', 'VAT', 'Amount incl. VAT', 'Deadline', 'Status'], legend: 'Statuses', statuses: ['Accepted', 'Pending', 'Declined'],
+    sheet: 'Quotes', title: 'Quote tracker', sum: ['Number of quotes', 'Accepted quotes', 'Pending', 'Declined'], sum2: ['Conversion rate', 'Total with tax', 'Accepted with tax'],
+    head: ['No.', 'Client', 'Quote date', 'Validity (days)', 'Amount before tax', 'Tax', 'Amount with tax', 'Deadline', 'Status'], legend: 'Statuses', statuses: ['Accepted', 'Pending', 'Declined'],
   },
 };
 
@@ -85,7 +85,7 @@ async function quoteModel(lang) {
     ws.getCell('G' + n).value = { formula: `E${n}*(1+F${n})`, result: ttc[i] };
     ws.getCell('H' + n).value = { formula: `C${n}+D${n}`, result: r.date + r.days };
     ws.getCell('E' + n).numFmt = f.money; ws.getCell('G' + n).numFmt = f.money;
-    ws.getCell('F' + n).numFmt = '0.0%';
+    ws.getCell('F' + n).numFmt = '0.0##%';
     ws.getCell('H' + n).numFmt = f.date;
   });
   const acc = rows.filter((r) => r.st === 0), pen = rows.filter((r) => r.st === 1), dec = rows.filter((r) => r.st === 2);
@@ -171,8 +171,63 @@ async function pivotStarter(lang) {
   await wb.xlsx.writeFile(path.join(OUT, `donnees-tcd-depart-${lang}.xlsx`));
 }
 
+/* ------------------------------------------------------------------ monthly budget (finance) */
+const BUDGET = [[1100, 1100], [450, 512.4], [180, 165.25], [120, 118], [200, 245.8], [400, 400], [150, 98.5]];   // planned, spent
+const INCOME = 3400;
+const BL = {
+  fr: { sheet: 'Budget', title: 'Budget mensuel', income: 'Revenu du mois', head: ['Catégorie', 'Budget prévu', 'Dépensé', 'Reste', '% du revenu'],
+    cats: ['Loyer', 'Épicerie', 'Transport', 'Téléphone et internet', 'Loisirs', 'Épargne', 'Autres'], total: 'Total', sum: ['Reste en fin de mois', "Taux d'épargne", 'Catégories dépassées'] },
+  en: { sheet: 'Budget', title: 'Monthly budget', income: 'Income this month', head: ['Category', 'Planned', 'Spent', 'Left', '% of income'],
+    cats: ['Rent', 'Groceries', 'Transport', 'Phone and internet', 'Fun', 'Savings', 'Other'], total: 'Total', sum: ['Left at month end', 'Savings rate', 'Categories over budget'] },
+};
+function budgetBase(lang) {
+  const L = BL[lang], wb = new ExcelJS.Workbook();
+  wb.creator = 'Excel Académie';
+  const ws = wb.addWorksheet(L.sheet);
+  [26, 16, 14, 14, 14].forEach((w, i) => { ws.getColumn(i + 1).width = w; });
+  ws.getCell('A1').value = L.title;
+  ws.getCell('A3').value = L.income; ws.getCell('B3').value = INCOME;
+  L.head.forEach((t, i) => { ws.getCell(5, i + 1).value = t; });
+  L.cats.forEach((c, i) => { const r = 6 + i; ws.getCell('A' + r).value = c; ws.getCell('B' + r).value = BUDGET[i][0]; ws.getCell('C' + r).value = BUDGET[i][1]; });
+  ws.getCell('A13').value = L.total;
+  L.sum.forEach((t, i) => { ws.getCell('A' + (15 + i)).value = t; });
+  return { wb, ws, L };
+}
+async function budgetStarter(lang) { await budgetBase(lang).wb.xlsx.writeFile(path.join(OUT, `budget-depart-${lang}.xlsx`)); }
+async function budgetModel(lang) {
+  const { wb, ws } = budgetBase(lang);
+  const f = FMT[lang];
+  const plan = BUDGET.reduce((a, r) => a + r[0], 0), spent = BUDGET.reduce((a, r) => a + r[1], 0);
+  BUDGET.forEach((r, i) => {
+    const n = 6 + i;
+    ws.getCell('D' + n).value = { formula: `B${n}-C${n}`, result: r[0] - r[1] };
+    ws.getCell('E' + n).value = { formula: `C${n}/$B$3`, result: r[1] / INCOME };
+  });
+  ws.getCell('B13').value = { formula: 'SUM(B6:B12)', result: plan };
+  ws.getCell('C13').value = { formula: 'SUM(C6:C12)', result: spent };
+  ws.getCell('D13').value = { formula: 'B13-C13', result: plan - spent };
+  ws.getCell('E13').value = { formula: 'C13/B3', result: spent / INCOME };
+  ws.getCell('B15').value = { formula: 'B3-C13', result: INCOME - spent };
+  ws.getCell('B16').value = { formula: 'C11/B3', result: BUDGET[5][1] / INCOME };
+  ws.getCell('B17').value = { formula: 'COUNTIF(D6:D12,"<0")', result: BUDGET.filter((r) => r[0] - r[1] < 0).length };
+  const money = (a) => { ws.getCell(a).numFmt = f.money; };
+  ['B3', 'B15'].forEach(money);
+  for (let n = 6; n <= 13; n++) { ['B', 'C', 'D'].forEach((c) => money(c + n)); ws.getCell('E' + n).numFmt = '0.0%'; }
+  ws.getCell('B16').numFmt = '0.0%';
+  ws.getCell('A1').font = { bold: true, size: 18, color: { argb: 'FF40304F' } };
+  for (let c = 1; c <= 5; c++) { const h = ws.getCell(5, c); h.fill = fill(PASTEL.pink); h.font = { bold: true, color: { argb: 'FFFFFFFF' } }; }
+  ['B3'].concat(range('B', 6, 12), range('C', 6, 12)).forEach((a) => { ws.getCell(a).fill = fill(PASTEL.peach); });
+  range('D', 6, 12).concat(range('E', 6, 12), ['B13', 'C13', 'D13', 'E13', 'B15', 'B16', 'B17']).forEach((a) => { ws.getCell(a).fill = fill(PASTEL.green); });
+  for (let c = 1; c <= 5; c++) ws.getCell(13, c).font = { bold: true };
+  ws.addConditionalFormatting({ ref: 'D6:D12', rules: [{ type: 'cellIs', operator: 'lessThan', formulae: [0], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: 'FFFDE0EA' } } } }] });
+  ws.views = [{ state: 'frozen', ySplit: 5 }];
+  await wb.xlsx.writeFile(path.join(OUT, `budget-modele-${lang}.xlsx`));
+}
+const range = (col, a, b) => Array.from({ length: b - a + 1 }, (_, i) => col + (a + i));
+
 (async () => {
   for (const lang of ['fr', 'en']) {
+    await budgetStarter(lang); await budgetModel(lang);
     await quoteStarter(lang); await quoteModel(lang);
     await salesStarter(lang); await salesModel(lang);
     await pivotStarter(lang);

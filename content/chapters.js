@@ -237,31 +237,31 @@ window.CHAPTERS = [
         id: 'f6', type: 'practice', level: 2, xp: 15, requires: ['f1'],
         title: T('Références absolues ($)', 'Absolute references ($)'),
         intro: T(
-          `<p>Quand tu recopies une formule vers le bas, les références <strong>glissent</strong> : <code>B2</code> devient <code>B3</code>, puis <code>B4</code>… C'est pratique… sauf pour une valeur <em>fixe</em> comme un taux de TVA.</p>
-           <p>Pour <strong>verrouiller</strong> une cellule, ajoute des <code>$</code> : <code>$E$1</code> ne bougera jamais, même recopiée.</p>`,
-          `<p>When you copy a formula down, references <strong>slide</strong>: <code>B2</code> becomes <code>B3</code>, then <code>B4</code>… Handy… except for a <em>fixed</em> value like a VAT rate.</p>
-           <p>To <strong>lock</strong> a cell, add <code>$</code> signs: <code>$E$1</code> will never move, even when copied.</p>`),
-        task: T('Calcule le <strong>prix TTC</strong> de la bougie Lune en utilisant le taux de TVA de la cellule <code>E1</code>, <strong>verrouillée avec des $</strong> pour pouvoir recopier la formule.',
-                'Calculate the <strong>price including VAT</strong> of the Moon candle using the VAT rate in cell <code>E1</code>, <strong>locked with $</strong> so the formula can be copied down.'),
+          `<p>Quand tu recopies une formule vers le bas, les références <strong>glissent</strong> : <code>B2</code> devient <code>B3</code>, puis <code>B4</code>… C'est pratique… sauf pour une valeur <em>fixe</em> comme un taux de taxe.</p>
+           <p>Pour <strong>verrouiller</strong> une cellule, ajoute des <code>$</code> : <code>$E$1</code> ne bougera jamais, même recopiée. Au Québec, on ajoute la <strong>TPS</strong> (5 %) et la <strong>TVQ</strong> (9,975 %) au prix : deux taux à verrouiller.</p>`,
+          `<p>When you copy a formula down, references <strong>slide</strong>: <code>B2</code> becomes <code>B3</code>, then <code>B4</code>… Handy… except for a <em>fixed</em> value like a tax rate.</p>
+           <p>To <strong>lock</strong> a cell, add <code>$</code> signs: <code>$E$1</code> will never move, even when copied. In Quebec, <strong>GST</strong> (5%) and <strong>QST</strong> (9.975%) are both added to the price: two rates to lock.</p>`),
+        task: T('Calcule le <strong>prix avec taxes</strong> de la bougie Lune : ajoute la TPS (<code>E1</code>) et la TVQ (<code>E2</code>), <strong>verrouillées avec des $</strong> pour pouvoir recopier la formule.',
+                'Calculate the <strong>price with tax</strong> of the Moon candle: add the GST (<code>E1</code>) and the QST (<code>E2</code>), <strong>locked with $</strong> so the formula can be copied down.'),
         grid: [
-          [T('Produit', 'Product'), T('Prix HT', 'Price excl.'), T('Prix TTC', 'Price incl.'), T('TVA', 'VAT'), 0.2],
-          [T('Lune', 'Moon'), 50, null],
+          [T('Produit', 'Product'), T('Prix', 'Price'), T('Avec taxes', 'With tax'), T('TPS', 'GST'), 0.05],
+          [T('Lune', 'Moon'), 40, null, T('TVQ', 'QST'), 0.09975],
           [T('Soleil', 'Sun'), 80, null],
           [T('Étoile', 'Star'), 30, null],
         ],
-        fmt: { B: 'money', C: 'money', E1: 'pct' },
+        fmt: { B: 'money', C: 'money', E1: 'pct', E2: 'pct' },
         target: 'C2',
-        tests: [{ expect: 60 }, { set: { B2: 100, E1: 0.1 }, expect: 110 }],
-        mustRef: ['$E$1'],
+        tests: [{ expect: 45.99 }, { set: { B2: 100, E1: 0.1, E2: 0.1 }, expect: 120 }],
+        mustRef: ['$E$1', '$E$2'],
         hints: [
-          T('Prix TTC = prix HT × (1 + taux de TVA).', 'Price incl. VAT = price excl. × (1 + VAT rate).'),
-          T('Le prix est en <code>B2</code>, le taux en <code>E1</code>. N\'oublie pas les <code>$</code> autour de E1 : <code>$E$1</code>.', 'The price is in <code>B2</code>, the rate in <code>E1</code>. Don\'t forget the <code>$</code> around E1: <code>$E$1</code>.'),
-          T('Tape : <code>=B2*(1+$E$1)</code>', 'Type: <code>=B2*(1+$E$1)</code>'),
+          T('Prix avec taxes = prix × (1 + TPS + TVQ).', 'Price with tax = price × (1 + GST + QST).'),
+          T('Le prix est en <code>B2</code>, la TPS en <code>E1</code> et la TVQ en <code>E2</code>. N\'oublie pas les <code>$</code> : <code>$E$1</code> et <code>$E$2</code>.', 'The price is in <code>B2</code>, the GST in <code>E1</code> and the QST in <code>E2</code>. Don\'t forget the <code>$</code>: <code>$E$1</code> and <code>$E$2</code>.'),
+          T('Tape : <code>=B2*(1+$E$1+$E$2)</code>', 'Type: <code>=B2*(1+$E$1+$E$2)</code>'),
         ],
-        solution: T('=B2*(1+$E$1)', '=B2*(1+$E$1)'),
+        solution: T('=B2*(1+$E$1+$E$2)', '=B2*(1+$E$1+$E$2)'),
         explain: T(
-          `Si tu recopies cette formule sur les lignes 3 et 4, <code>B2</code> devient <code>B3</code>, <code>B4</code> (c'est voulu), mais <code>$E$1</code> reste figé sur le taux de TVA. Un seul endroit à modifier si le taux change.`,
-          `If you copy this formula to rows 3 and 4, <code>B2</code> becomes <code>B3</code>, <code>B4</code> (intended), but <code>$E$1</code> stays locked on the VAT rate. Only one place to edit if the rate changes.`),
+          `Si tu recopies cette formule sur les lignes 3 et 4, <code>B2</code> devient <code>B3</code>, <code>B4</code> (c'est voulu), mais <code>$E$1</code> et <code>$E$2</code> restent figés sur la TPS et la TVQ. Un seul endroit à modifier si un taux change.`,
+          `If you copy this formula to rows 3 and 4, <code>B2</code> becomes <code>B3</code>, <code>B4</code> (intended), but <code>$E$1</code> and <code>$E$2</code> stay locked on the GST and QST. Only one place to edit if a rate changes.`),
         pro: T('Astuce de pro : pendant que tu écris une référence, appuie sur <strong>F4</strong> (Mac : ⌘ + T) pour faire défiler : <code>E1</code> → <code>$E$1</code> → <code>E$1</code> → <code>$E1</code>.',
                'Pro tip: while typing a reference, press <strong>F4</strong> (Mac: ⌘ + T) to cycle: <code>E1</code> → <code>$E$1</code> → <code>E$1</code> → <code>$E1</code>.'),
       },
@@ -694,9 +694,9 @@ window.CHAPTERS = [
         id: 'p1', type: 'build', level: 2, xp: 40,
         title: T('Projet : le calculateur de prix', 'Project: the price calculator'),
         intro: T(
-          `<p>Tu as vu les formules. Maintenant on construit un <strong>vrai outil dans Excel</strong> : un calculateur qui te dit à quel prix vendre un produit, avec ta marge et la TVA. C'est le même genre d'outil que dans les modèles pastel que tu aimes.</p>
+          `<p>Tu as vu les formules. Maintenant on construit un <strong>vrai outil dans Excel</strong> : un calculateur qui te dit à quel prix vendre un produit, avec ta marge et les taxes de vente (TPS + TVQ). C'est le même genre d'outil que dans les modèles pastel que tu aimes.</p>
            <p>Trois étapes : <strong>calculer</strong>, <strong>formater</strong>, <strong>décorer</strong>. Ensuite tu déposes ton fichier ici et je le vérifie, case par case.</p>`,
-          `<p>You've seen formulas. Now we build a <strong>real tool in Excel</strong>: a calculator that tells you what price to sell a product at, with your margin and VAT. It's the same kind of tool as the pastel templates you like.</p>
+          `<p>You've seen formulas. Now we build a <strong>real tool in Excel</strong>: a calculator that tells you what price to sell a product at, with your margin and sales tax (GST + QST). It's the same kind of tool as the pastel templates you like.</p>
            <p>Three stages: <strong>calculate</strong>, <strong>format</strong>, <strong>decorate</strong>. Then you drop your file here and I check it, cell by cell.</p>`),
         files: {
           start: { fr: 'assets/calculateur-prix-depart-fr.xlsx', en: 'assets/calculateur-prix-depart-en.xlsx' },
@@ -706,9 +706,9 @@ window.CHAPTERS = [
           {
             title: T('Ouvre le fichier de départ', 'Open the starter file'),
             body: T(
-              `<p>Télécharge le fichier de départ (bouton ci-dessus) et ouvre-le dans <strong>Excel</strong>. Tu y vois six cases de départ (matières, temps, taux horaire, autres coûts, marge, TVA) et <strong>cinq résultats vides</strong> de <code>B10</code> à <code>B14</code>.</p>
+              `<p>Télécharge le fichier de départ (bouton ci-dessus) et ouvre-le dans <strong>Excel</strong>. Tu y vois six cases de départ (matières, temps, taux horaire, autres coûts, marge, taxes de vente) et <strong>cinq résultats vides</strong> de <code>B10</code> à <code>B14</code>.</p>
                <p>Enregistre-le tout de suite sous un nouveau nom : <kbd>F12</kbd> sous Windows, ou <em>Fichier → Enregistrer une copie</em> sur iPad.</p>`,
-              `<p>Download the starter file (button above) and open it in <strong>Excel</strong>. You'll see six starting cells (materials, time, hourly rate, other costs, markup, VAT) and <strong>five empty results</strong> from <code>B10</code> to <code>B14</code>.</p>
+              `<p>Download the starter file (button above) and open it in <strong>Excel</strong>. You'll see six starting cells (materials, time, hourly rate, other costs, markup, sales tax) and <strong>five empty results</strong> from <code>B10</code> to <code>B14</code>.</p>
                <p>Save it under a new name right away: <kbd>F12</kbd> on Windows, or <em>File → Save a Copy</em> on iPad.</p>`),
           },
           {
@@ -724,18 +724,20 @@ window.CHAPTERS = [
           {
             title: T('Les prix de vente (B11 et B12)', 'The selling prices (B11 and B12)'),
             body: T(
-              `<p><strong>Prix HT</strong> = coût de revient × (1 + taux de marge). <strong>Prix TTC</strong> = prix HT × (1 + TVA).</p>
+              `<p><strong>Prix avant taxes</strong> = coût de revient × (1 + taux de marge). <strong>Prix taxes incluses</strong> = prix avant taxes × (1 + taxes de vente).</p>
+               <p>Au Québec, TPS 5 % + TVQ 9,975 % = <strong>14,975 %</strong> : c'est la valeur de départ en <code>B8</code>.</p>
                <details><summary>Indice</summary><p><code>B11</code> : <code>=B10*(1+B7)</code><br><code>B12</code> : <code>=B11*(1+B8)</code></p></details>`,
-              `<p><strong>Price excl. VAT</strong> = cost price × (1 + markup). <strong>Price incl. VAT</strong> = price excl. VAT × (1 + VAT).</p>
+              `<p><strong>Price before tax</strong> = cost price × (1 + markup). <strong>Price with tax</strong> = price before tax × (1 + sales tax).</p>
+               <p>In Quebec, GST 5% + QST 9.975% = <strong>14.975%</strong>: that's the starting value in <code>B8</code>.</p>
                <details><summary>Hint</summary><p><code>B11</code>: <code>=B10*(1+B7)</code><br><code>B12</code>: <code>=B11*(1+B8)</code></p></details>`),
           },
           {
             title: T('Bénéfice et taux de marque (B13 et B14)', 'Profit and margin rate (B13 and B14)'),
             body: T(
-              `<p><strong>Bénéfice</strong> = prix HT − coût de revient. <strong>Taux de marque</strong> = bénéfice ÷ prix HT.</p>
+              `<p><strong>Bénéfice</strong> = prix avant taxes − coût de revient. <strong>Taux de marque</strong> = bénéfice ÷ prix avant taxes.</p>
                <p><strong>Attention :</strong> ne confonds pas : le <em>taux de marge</em> se calcule sur le coût, le <em>taux de marque</em> sur le prix de vente. Avec 50 % de marge, tu n'as « que » 33 % de taux de marque !</p>
                <details><summary>Indice</summary><p><code>B13</code> : <code>=B11-B10</code><br><code>B14</code> : <code>=B13/B11</code></p></details>`,
-              `<p><strong>Profit</strong> = price excl. VAT − cost price. <strong>Margin rate</strong> = profit ÷ price excl. VAT.</p>
+              `<p><strong>Profit</strong> = price before tax − cost price. <strong>Margin rate</strong> = profit ÷ price before tax.</p>
                <p><strong>Careful:</strong> don't mix them up: the <em>markup</em> is computed on cost, the <em>margin rate</em> on the selling price. With a 50% markup you only get a 33% margin rate!</p>
                <details><summary>Hint</summary><p><code>B13</code>: <code>=B11-B10</code><br><code>B14</code>: <code>=B13/B11</code></p></details>`),
           },
@@ -770,19 +772,19 @@ window.CHAPTERS = [
             body: T(
               `<p>Facultatif, mais c'est ce qui fait la différence :</p>
                <p>• <strong>Mise en forme conditionnelle</strong> sur <code>B14</code> : une couleur d'alerte si le taux de marque passe sous 20 % (<em>Accueil → Mise en forme conditionnelle</em>).<br>
-                  • <strong>Liste déroulante</strong> sur la TVA <code>B8</code> : 5,5 % / 10 % / 20 % (<em>Données → Validation des données → Liste</em>).<br>
+                  • <strong>Liste déroulante</strong> sur les taxes de vente <code>B8</code> : 14,975 % (Québec) / 5 % / 13 % / 15 % (<em>Données → Validation des données → Liste</em>).<br>
                   • <strong>Graphique</strong> : un secteur qui montre la part des matières, de la main-d'œuvre et des autres coûts (<em>Insertion → Graphique</em>).</p>`,
               `<p>Optional, but it's what makes the difference:</p>
                <p>• <strong>Conditional formatting</strong> on <code>B14</code>: an alert colour if the margin rate drops below 20% (<em>Home → Conditional Formatting</em>).<br>
-                  • <strong>Dropdown list</strong> on the VAT <code>B8</code>: 5.5% / 10% / 20% (<em>Data → Data Validation → List</em>).<br>
+                  • <strong>Dropdown list</strong> on the sales tax <code>B8</code>: 14.975% (Quebec) / 5% / 13% / 15% (<em>Data → Data Validation → List</em>).<br>
                   • <strong>Chart</strong>: a pie showing the share of materials, labour and other costs (<em>Insert → Chart</em>).</p>`),
           },
         ],
         // cells the learner types into (the starting values); checks re-run her formulas on other values
         inputs: ['B3', 'B4', 'B5', 'B6', 'B7', 'B8'],
         scenarios: [
-          { B3: 10, B4: 60, B5: 20, B6: 2, B7: 0.3, B8: 0.1 },
-          { B3: 0, B4: 0, B5: 10, B6: 5, B7: 1, B8: 0.2 },
+          { B3: 10, B4: 60, B5: 20, B6: 2, B7: 0.3, B8: 0.05 },
+          { B3: 0, B4: 0, B5: 10, B6: 5, B7: 1, B8: 0.14975 },
         ],
         model: (i) => {
           const cost = i.B3 + (i.B4 / 60) * i.B5 + i.B6, ht = cost * (1 + i.B7), ttc = ht * (1 + i.B8);
@@ -790,8 +792,8 @@ window.CHAPTERS = [
         },
         checks: [
           { id: 'c10', group: 'calc', kind: 'calc', cell: 'B10', label: T('Coût de revient (B10)', 'Cost price (B10)') },
-          { id: 'c11', group: 'calc', kind: 'calc', cell: 'B11', label: T('Prix de vente HT (B11)', 'Selling price excl. VAT (B11)') },
-          { id: 'c12', group: 'calc', kind: 'calc', cell: 'B12', label: T('Prix de vente TTC (B12)', 'Selling price incl. VAT (B12)') },
+          { id: 'c11', group: 'calc', kind: 'calc', cell: 'B11', label: T('Prix de vente avant taxes (B11)', 'Selling price before tax (B11)') },
+          { id: 'c12', group: 'calc', kind: 'calc', cell: 'B12', label: T('Prix de vente taxes incluses (B12)', 'Selling price with tax (B12)') },
           { id: 'c13', group: 'calc', kind: 'calc', cell: 'B13', label: T('Bénéfice (B13)', 'Profit (B13)') },
           { id: 'c14', group: 'calc', kind: 'calc', cell: 'B14', display: 'pct', tol: 0.0005, label: T('Taux de marque (B14)', 'Margin rate (B14)') },
           { id: 'd1', group: 'design', kind: 'format', type: 'money', cells: ['B3', 'B5', 'B6', 'B10', 'B11', 'B12', 'B13'], label: T('Les montants sont en dollars $', 'Amounts are formatted in dollars $') },
@@ -852,7 +854,7 @@ window.CHAPTERS = [
       T('Seuil de rentabilité (point mort)', 'Break-even point'),
       T('Compte de résultat prévisionnel', 'Forecast income statement'),
       T('Plan de trésorerie sur 12 mois', '12-month cash-flow plan'),
-      T('Suivi de TVA et d\'impôts estimés', 'VAT and estimated-tax tracker'),
+      T('Suivi de TPS/TVQ et d\'impôts estimés', 'GST/QST and estimated-tax tracker'),
       T('Tableau de bord comptable (comme sur ton modèle)', 'Accounting dashboard (like your template)'),
     ],
   },

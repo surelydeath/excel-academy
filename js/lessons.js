@@ -126,6 +126,12 @@
     function go(n) { stage = n; setStages(labels, n); [showLearn, showPractice, showRecap][n](); if (n !== 0) $('#prereq-slot').innerHTML = ''; }
 
     function showLearn() {
+      const deck = window.SLIDES && window.SLIDES[lesson.id];
+      if (deck) {
+        setBody('<div id="deckRoot"></div>');
+        App.slides.mount($('#deckRoot'), { deck, lesson, onDone: () => go(1), doneLabel: t('toPractice') });
+        return;
+      }
       setBody(`
         <div class="two learn">
           <article class="read"><div class="prose big">${L(lesson.intro)}</div>
@@ -189,7 +195,7 @@
 
       function doCheck() {
         const res = checkFormula(lesson, input.value);
-        if (!res.ok) { fb.innerHTML = bannerHTML('bad', res.html); input.focus(); return; }
+        if (!res.ok) { App.sound.play('wrong'); fb.innerHTML = bannerHTML('bad', res.html); input.focus(); return; }
         solvedFormula = input.value.trim();
         const out = App.completeLesson(lesson, { hints });
         App.celebrate(out);
@@ -233,8 +239,12 @@
     const progress = (i) => `<div class="seg qseg">${lesson.questions.map((_, k) => `<span class="${k < i ? 'on' : ''} ${k === i ? 'cur' : ''}"></span>`).join('')}</div>`;
 
     function showIntro() {
-      setBody(`<div class="center-card wide"><div class="prose big">${L(lesson.intro)}</div>
-        <div class="actions"><button class="btn primary" id="startQ">${t('quizStart', n)}</button></div></div>`);
+      setBody(`<div class="two intro-split">
+        <article class="read"><div class="prose big">${L(lesson.intro)}</div>
+          <div class="actions"><button class="btn primary big" id="startQ">${t('quizStart', n)}</button></div></article>
+        <aside class="stage"><div class="panel quiz-card"><span class="qc-n">${n}</span><span class="qc-l">${t('questionsWord')}</span>${progress(-1)}
+          <p class="muted small">${ic('clock', 15)} ${t('briefTime', Math.max(2, Math.ceil(n / 2)))}</p>
+          <p class="muted small">${ic('help', 15)} ${t('quizHelpNote')}</p></div></aside></div>`);
       $('#startQ').onclick = () => showQuestion(0);
     }
 
@@ -266,8 +276,8 @@
       };
       $$('.opt').forEach((btn) => btn.addEventListener('click', () => {
         const oi = +btn.dataset.o;
-        if (oi === q.answer) finishQ(false);
-        else { wrongs++; qWrong++; btn.classList.add('wrong'); $('.mark', btn).innerHTML = ic('close', 14); btn.disabled = true; $('#qfeed').innerHTML = bannerHTML('bad', esc(t('quizWrong'))); }
+        if (oi === q.answer) { App.sound.play('right'); finishQ(false); }
+        else { App.sound.play('wrong'); wrongs++; qWrong++; btn.classList.add('wrong'); $('.mark', btn).innerHTML = ic('close', 14); btn.disabled = true; $('#qfeed').innerHTML = bannerHTML('bad', esc(t('quizWrong'))); }
       }));
       $('#qReveal').onclick = () => { if (!qWrong) wrongs++; finishQ(true); };
     }
@@ -381,24 +391,43 @@
     }
 
     /* ---- 4. one step at a time */
+    // a step is shown like slides: one short block at a time (a hint stays attached to the block before it)
+    function beatsOf(html) {
+      const d = document.createElement('div'); d.innerHTML = html;
+      const out = [];
+      [...d.children].forEach((el) => { if (el.tagName === 'DETAILS' && out.length) out[out.length - 1] += el.outerHTML; else out.push(el.outerHTML); });
+      return out.length ? out : [html];
+    }
     function showStep() {
       const i = Math.min(pos.i || 0, N - 1), s = lesson.steps[i];
+      const beats = beatsOf(L(s.body));
+      let shown = 1;
       setBody(`
         <div class="steps-layout">
           <nav class="steps-nav" aria-label="${esc(t('briefSteps', N))}">${lesson.steps.map((st, k) => `<button class="sn ${k === i ? 'cur' : ''} ${ticks[k] ? 'done' : ''}" data-k="${k}"><span class="dot">${ticks[k] ? ic('check', 12) : k + 1}</span><span>${L(st.title)}</span></button>`).join('')}</nav>
           <article class="step-card">
             <div class="step-count">${esc(t('stepOf', i + 1, N))}</div>
             <h2 class="step-h">${L(s.title)}</h2>
-            <div class="prose">${L(s.body)}</div>
+            <div class="prose beats" id="beats"></div>
             <div class="actions step-actions">
               ${i > 0 ? `<button class="btn text" id="stPrev">${ic('back', 16)}${t('prevStep')}</button>` : `<button class="btn text" id="stPrev">${ic('back', 16)}${t('openBack')}</button>`}
-              <button class="btn primary" id="stDone">${ic('check', 18)}${t(i + 1 < N ? 'stepFinished' : 'stepLast')}</button>
+              <span class="beat-ctl"><span class="dots" id="beatDots"></span><button class="btn text sm" id="stAll"></button><button class="btn primary" id="stDone"></button></span>
             </div>
           </article>
         </div>`);
+      function paintBeats() {
+        $('#beats').innerHTML = beats.slice(0, shown).map((b, k) => `<div class="beat ${k === shown - 1 && shown > 1 ? 'cur' : ''}">${b}</div>`).join('');
+        $('#beatDots').innerHTML = beats.length > 1 ? beats.map((_, k) => `<i class="dd ${k < shown - 1 ? 'on' : k === shown - 1 ? 'cur' : ''}"></i>`).join('') : '';
+        const more = shown < beats.length, d = $('#stDone');
+        d.innerHTML = more ? `${t('beatNext')}${ic('next', 16)}` : `${ic('check', 18)}${t(i + 1 < N ? 'stepFinished' : 'stepLast')}`;
+        $('#stAll').textContent = more ? t('beatAll') : ''; $('#stAll').style.display = more ? '' : 'none';
+        d.onclick = more ? () => { shown++; App.sound.play('next'); paintBeats(); } : finish;
+      }
+      function finish() { App.sound.play('step'); ticks[i] = true; App.save(); i + 1 < N ? go({ s: 'step', i: i + 1 }) : go({ s: 'check' }); }
+      $('#stAll').onclick = () => { shown = beats.length; paintBeats(); };
+      paintBeats();
       $$('.sn').forEach((b) => (b.onclick = () => go({ s: 'step', i: +b.dataset.k })));
       $('#stPrev').onclick = () => (i > 0 ? go({ s: 'step', i: i - 1 }) : go({ s: 'open' }));
-      $('#stDone').onclick = () => { ticks[i] = true; App.save(); i + 1 < N ? go({ s: 'step', i: i + 1 }) : go({ s: 'check' }); };
     }
 
     /* ---- 5. upload and check */

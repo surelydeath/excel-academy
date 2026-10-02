@@ -5,7 +5,7 @@
   "description": "Pastel step-by-step site to learn Excel formulas, design and finance (FR/EN)",
   "scripts": {
     "start": "node serve.js",
-    "test": "node tests/verify-content.js && node tests/verify-projects.js && node tests/verify-notebook.js",
+    "test": "node tests/verify-content.js && node tests/verify-slides.js && node tests/verify-projects.js && node tests/verify-notebook.js",
     "build:starters": "node tools/make-starters.js && node tools/make-projects.js"
   },
   "devDependencies": {

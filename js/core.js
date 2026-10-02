@@ -3,11 +3,11 @@
 const App = (() => {
   /* ------------------------------------------------------------ state */
   const KEY = 'excel-academy-v1';
-  const defaults = () => ({ lang: 'fr', xp: 0, done: {}, known: {}, streak: { last: null, count: 0 }, badges: {}, bonus: {}, steps: {}, wiz: {}, dl: {}, onboarded: false });
+  const defaults = () => ({ lang: 'fr', xp: 0, done: {}, known: {}, streak: { last: null, count: 0 }, badges: {}, bonus: {}, steps: {}, wiz: {}, dl: {}, onboarded: false, sound: true });
   const state = defaults();
   try { Object.assign(state, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { /* first visit or blocked storage */ }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* private mode: ignore */ } };
-  const resetState = () => { const lang = state.lang; Object.keys(state).forEach((k) => delete state[k]); Object.assign(state, defaults(), { lang }); save(); };
+  const resetState = () => { const lang = state.lang, sound = state.sound; Object.keys(state).forEach((k) => delete state[k]); Object.assign(state, defaults(), { lang, sound }); save(); };
 
   /* ------------------------------------------------------------ helpers */
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -91,7 +91,7 @@ const App = (() => {
     if (typeof v !== 'number') return String(v);
     const loc = state.lang === 'fr' ? 'fr-CA' : 'en-CA';
     if (kind === 'money') return new Intl.NumberFormat(loc, { style: 'currency', currency: 'CAD', minimumFractionDigits: Number.isInteger(v) ? 0 : 2, maximumFractionDigits: 2 }).format(v);
-    if (kind === 'pct') return new Intl.NumberFormat(loc, { style: 'percent', maximumFractionDigits: 1 }).format(v);
+    if (kind === 'pct') return new Intl.NumberFormat(loc, { style: 'percent', maximumFractionDigits: 3 }).format(v);
     return new Intl.NumberFormat(loc, { maximumFractionDigits: 2 }).format(v);
   }
   const fmtKind = (lesson, addr) => { const col = addr.replace(/\d+/, ''); const f = lesson.fmt || {}; return f[addr] || f[col]; };
@@ -176,7 +176,8 @@ const App = (() => {
 
   function celebrate(res) {
     confetti();
-    res.newBadges.forEach((b, i) => setTimeout(() => toast(esc(t('badgeUnlocked')) + '<b>' + esc(L(b.title)) + '</b>', b.icon), 500 + i * 1800));
+    App.sound.play('win');
+    res.newBadges.forEach((b, i) => setTimeout(() => { App.sound.play('badge'); toast(esc(t('badgeUnlocked')) + '<b>' + esc(L(b.title)) + '</b>', b.icon); }, 500 + i * 1800));
     if (res.levelUp) setTimeout(() => toast(esc(t('levelUp', '', L(res.levelUp.name))), 'star'), 500 + res.newBadges.length * 1800);
   }
 

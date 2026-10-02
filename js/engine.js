@@ -70,6 +70,28 @@ const Engine = (() => {
     }
   }
 
+  // Run several formulas at once ({ 'D3': '=D2+B3-C3', ... }) so they can depend on each other.
+  // Returns { D3: { value } | { error } }.
+  function runMany({ grid, cells, set, lang }) {
+    ensure();
+    const data = grid.map((row) => row.map((c) => (c === undefined ? null : c)));
+    const hf = HyperFormula.buildFromArray(data.length ? data : [[null]], options(lang));
+    const out = {};
+    try {
+      for (const [addr, val] of Object.entries(set || {})) hf.setCellContents(parseAddress(addr), [[val]]);
+      for (const [addr, f] of Object.entries(cells)) hf.setCellContents(parseAddress(addr), [[fixBooleans(f, lang)]]);
+      for (const addr of Object.keys(cells)) {
+        const err = normalizeError(hf.getCellValue(parseAddress(addr)));
+        out[addr] = err ? { error: err.error } : { value: hf.getCellValue(parseAddress(addr)) };
+      }
+    } catch (e) {
+      Object.keys(cells).forEach((a) => { out[a] = out[a] || { error: 'ERROR' }; });
+    } finally {
+      hf.destroy();
+    }
+    return out;
+  }
+
   function norm(s) {
     return String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase();
   }
@@ -80,7 +102,7 @@ const Engine = (() => {
     return norm(got) === norm(expected);
   }
 
-  return { run, equal, parseAddress, colLetter, fixBooleans };
+  return { run, runMany, equal, parseAddress, colLetter, fixBooleans };
 })();
 
 if (typeof module !== 'undefined') module.exports = Engine;

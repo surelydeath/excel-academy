@@ -1,4 +1,4 @@
-# Excel Académie 🌸
+# Excel Académie
 
 A pastel study site for Excel, pastel dashboards and finance. French by default, English with one click.
 Plain HTML/CSS/JS, no framework and no build step. Currency is Canadian dollars ($).
@@ -8,10 +8,11 @@ Plain HTML/CSS/JS, no framework and no build step. Currency is Canadian dollars 
 - **Dashboard** with where you are, what's next, what to review and your badges, plus a sidebar to navigate.
 - **Three tracks:** Excel skills (A), Visuals & pastel tools (B), Finance (C).
 - **Every lesson is a few short screens** (no long scrolling):
-  - *practice*: understand → practise in a mini Excel → remember
+  - *practice*: understand (a short **slide deck** with a live example) → practise in a mini Excel → remember
   - *quiz*: one question per screen, with "Besoin d'aide ?" and "Voir la réponse"
-  - *project*: download the starter → "did it download?" → open it in Excel → one step at a time → upload the `.xlsx` to be checked (in the browser, never sent anywhere)
-- **Notebook (Carnet):** 60 searchable entries (functions, basics, shortcuts, errors, finance, design). Open it from the sidebar, the search button, the `/` key, or the help button on any lesson or question.
+  - *project*: download the starter → "did it download?" → open it in Excel → one step at a time (each step reveals one block at a time, like slides) → upload the `.xlsx` to be checked (in the browser, never sent anywhere)
+- **Sounds:** soft synthesised UI sounds (no audio files), muted with the speaker button in the top bar; the choice is remembered.
+- **Notebook (Carnet):** 62 searchable entries, each with "what you need", a step-by-step guide shown one step at a time (Windows and iPad), and common mistakes (functions, basics, shortcuts, errors, finance, design). Open it from the sidebar, the search button, the `/` key, or the help button on any lesson or question.
 - **Soft prerequisites:** "recommended before" lessons with *I already know this* and *Continue anyway*. Nothing is locked.
 - **First visit:** "Where are you at?" marks what she already knows.
 
@@ -27,14 +28,18 @@ npm start        # then open http://localhost:4173
 | What | Where |
 |---|---|
 | Tracks, chapters, first lessons (FR + EN) | `content/chapters.js` |
-| More lessons: tables, pivot, tools, design, quote tracker, finance models | `content/lessons-2.js` |
+| More lessons: tables, pivot, tools, design, quote tracker, finance models, monthly budget | `content/lessons-2.js` |
+| Slide decks for the practice lessons (text + live example) | `content/slides.js` |
 | Notebook entries and which lesson uses which | `content/notebook.js` |
+| Notebook step-by-step guides (needs, steps, mistakes per entry) | `content/notebook-steps.js` |
 | App core: state, progress, prerequisites | `js/core.js` |
 | Shell and router (sidebar, top bar) | `js/app.js` |
 | Dashboard, track, chapter, progress, welcome screens | `js/views.js` |
 | Lesson screens (practice, quiz, project wizard) | `js/lessons.js` |
 | Notebook page and help drawer | `js/notebook-ui.js`, `js/search.js` |
 | Formula checker for practice lessons | `js/engine.js` |
+| Slide player (typed formulas, coloured references, editable examples) | `js/slides.js`, `js/formula-refs.js` |
+| Sound effects and the mute button | `js/sound.js` |
 | Reads uploaded .xlsx files | `js/xlsx-reader.js` |
 | Project checks | `js/project-checks.js` |
 | UI text (FR + EN) | `js/i18n.js` |
@@ -51,6 +56,10 @@ Every text is bilingual: `T('français', 'english')`.
 - Add its help entries to `NOTES_FOR` in `content/notebook.js` (and `NOTES_FOR_Q` for individual quiz questions).
 - A *build* project can check formulas (re-calculated on changed values), formats, fills, dropdowns, conditional-format rules, frozen panes, filters/tables, charts and pivot tables. Add its starter and model in `tools/make-starters.js` or `tools/make-projects.js`, run `npm run build:starters`, then describe `steps`, `inputs`, `scenarios`, `model` and `checks`.
 
+## Add slides to a practice lesson
+
+In `content/slides.js`, add `D.<lessonId> = { ex, slides }`. `ex` is a small example sheet (`grid`, `target`, `f` = the formula as `T(fr, en)`, optional `fmt`, `also`, `editText`). Each slide is `S(show, title, text)` with `show` = `'data'` (no formula yet), `'type'` (the formula is typed out, then Enter), `'result'`, or `'edit'` (numbers can be changed and the result follows). `copy: true` also fills the cells in `ex.also`, as Excel's fill handle would. `npm test` checks that every example calculates.
+
 ## Tests
 
 ```bash
@@ -58,7 +67,8 @@ npm test
 ```
 
 - `verify-content.js`: every practice solution passes its tests in FR and EN, and a typed-in number does not.
-- `verify-projects.js`: each finished model passes, each starter fails, and sneaky files (typed numbers, hard-coded values, wrong colours, euros instead of dollars, missing dropdowns, simulated pivot tables) are caught.
+- `verify-projects.js`: each finished model passes, each starter fails, and sneaky files (typed numbers, hard-coded values, wrong colours, euros instead of dollars, missing dropdowns, simulated pivot tables, an unlocked `$B$3` in the budget) are caught.
+- `verify-slides.js`: every practice lesson has a deck, every example calculates in FR and EN, copying a formula down keeps `$` locks.
 - `verify-notebook.js`: every help link points to a real entry, everything exists in FR and EN, and search ranks the right entry first.
 
 ## Put it online

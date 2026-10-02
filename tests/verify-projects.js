@@ -101,14 +101,35 @@ async function withPivot(project, lang, opts = {}) {
       expect(!get(res, 'c3').ok, 'a formula that just returns 4 is caught: ' + plain(get(res, 'c3').msg));
       res = await check(p, await variant(p, 'model', lang, (ws) => { ws.getCell('H9').value = { formula: 'C9+30', result: 0 }; }), lang);
       expect(!get(res, 'c2').ok && /H9/.test(get(res, 'c2').msg), 'validity hard-coded to 30 days is caught: ' + plain(get(res, 'c2').msg));
-      res = await check(p, await variant(p, 'model', lang, (ws) => { ws.getCell('G10').value = { formula: 'E10*1.2', result: 0 }; }), lang);
-      expect(!get(res, 'c1').ok, 'VAT hard-coded to 20% is caught: ' + plain(get(res, 'c1').msg));
+      res = await check(p, await variant(p, 'model', lang, (ws) => { ws.getCell('G10').value = { formula: 'E10*1.14975', result: 0 }; }), lang);
+      expect(!get(res, 'c1').ok, 'tax rate typed into the formula is caught: ' + plain(get(res, 'c1').msg));
       res = await check(p, await variant(p, 'model', lang, (ws) => { for (let n = 8; n <= 17; n++) ws.getCell('I' + n).dataValidation = undefined; }), lang);
       expect(!get(res, 'd6').ok, 'missing dropdown is caught: ' + plain(get(res, 'd6').msg));
       res = await check(p, await variant(p, 'model', lang, (ws) => { ws.conditionalFormattings = []; }), lang);
       expect(!get(res, 'd7').ok, 'missing status colours are caught: ' + plain(get(res, 'd7').msg));
       res = await check(p, await variant(p, 'model', lang, (ws) => { ws.getCell('I8').value = ws.getCell('K9').value; ws.getCell('I9').value = ws.getCell('K8').value; ws.getCell('E12').value = 999; }), lang);
       expect(res.filter((r) => !r.bonus).every((r) => r.ok), 'still passes when she edits statuses and amounts');
+    }
+
+    /* ---------- m6: monthly budget ---------- */
+    {
+      const p = byId('m6'); console.log('\n[m6] sneaky variants');
+      let res = await check(p, await variant(p, 'model', lang, (ws) => { ws.getCell('C13').value = 2639.95; }), lang);
+      expect(!get(res, 'c3').ok && /=/.test(get(res, 'c3').msg), 'typed total is caught: ' + plain(get(res, 'c3').msg));
+      res = await check(p, await variant(p, 'model', lang, (ws) => { ws.getCell('E7').value = { formula: 'C7/B4', result: 0 }; }), lang);
+      expect(!get(res, 'c2').ok, 'income not locked with $ (C7/B4) is caught: ' + plain(get(res, 'c2').msg));
+      res = await check(p, await variant(p, 'model', lang, (ws) => { ws.getCell('E8').value = { formula: 'C8/3400', result: 0 }; }), lang);
+      expect(!get(res, 'c2').ok && /E8/.test(get(res, 'c2').msg), 'income typed into the formula is caught: ' + plain(get(res, 'c2').msg));
+      res = await check(p, await variant(p, 'model', lang, (ws) => { ws.getCell('B17').value = { formula: '2', result: 2 }; }), lang);
+      expect(!get(res, 'c7').ok, 'a count that just returns 2 is caught: ' + plain(get(res, 'c7').msg));
+      res = await check(p, await variant(p, 'model', lang, (ws) => { ws.getCell('B16').value = { formula: 'C11/C13', result: 0 }; }), lang);
+      expect(!get(res, 'c6').ok, 'savings rate on the wrong base is caught: ' + plain(get(res, 'c6').msg));
+      res = await check(p, await variant(p, 'model', lang, (ws) => { ws.conditionalFormattings = []; }), lang);
+      expect(!get(res, 'd6').ok, 'missing pink alert is caught: ' + plain(get(res, 'd6').msg));
+      res = await check(p, await variant(p, 'model', lang, (ws) => { for (let r = 13; r <= 17; r++) ['B', 'C', 'D', 'E'].forEach((c) => { ws.getCell(c + r).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFDE9D8' } }; }); }), lang);
+      expect(!get(res, 'd5').ok, 'same colour for inputs and results is flagged');
+      res = await check(p, await variant(p, 'model', lang, (ws) => { ws.getCell('B3').value = 5200; ws.getCell('C8').value = 410; ws.getCell('B9').value = 150; }), lang);
+      expect(res.filter((r) => !r.bonus).every((r) => r.ok), 'still passes when she changes her income and expenses');
     }
 
     /* ---------- t2: clean sales list ---------- */

@@ -97,7 +97,7 @@
       T(`<p><kbd>Ctrl</kbd> + <kbd>1</kbd> ouvre <em>Format de cellule</em>. <strong>Monétaire</strong> ajoute le signe $. <strong>Pourcentage</strong> multiplie par 100 à l'affichage (0,2 s'affiche 20 %). <strong>Date</strong> transforme un nombre en date. La valeur reste intacte.</p>`, `<p><kbd>Ctrl</kbd> + <kbd>1</kbd> opens <em>Format Cells</em>. <strong>Currency</strong> adds the $ sign. <strong>Percentage</strong> multiplies by 100 for display (0.2 shows as 20%). <strong>Date</strong> turns a number into a date. The value stays intact.</p>`),
       { kw: 'format cellule monetaire dollar pourcentage date devise ctrl 1 afficher', lessons: ['p1', 't2', 'p2'] }),
     E('percent', 'basics', T('Les pourcentages', 'Percentages'), T('20 % est stocké comme 0,2.', '20% is stored as 0.2.'),
-      T(`<p>Un pourcentage est un nombre : <code>20 %</code> vaut <code>0,2</code>. Pour ajouter une taxe de 20 % : <code>=prix*(1+0,2)</code>. Applique le format Pourcentage pour l'affichage.</p>`, `<p>A percentage is a number: <code>20%</code> equals <code>0.2</code>. To add 20% tax: <code>=price*(1+0.2)</code>. Apply the Percentage format for display.</p>`),
+      T(`<p>Un pourcentage est un nombre : <code>20 %</code> vaut <code>0,2</code>. Pour ajouter une taxe de 5 % : <code>=prix*(1+0,05)</code>. Applique le format Pourcentage pour l'affichage.</p>`, `<p>A percentage is a number: <code>20%</code> equals <code>0.2</code>. To add 5% tax: <code>=price*(1+0.05)</code>. Apply the Percentage format for display.</p>`),
       { kw: 'pourcentage taux pct 0,2 taxe', lessons: ['f6', 'm2'] }),
     E('table-structure', 'basics', T('Bien structurer ses données', 'Structuring your data well'), T('Une ligne = un élément, une colonne = une information.', 'One row = one item, one column = one piece of information.'),
       T(`<p>Une liste propre : en-têtes sur la première ligne, <strong>une ligne par élément</strong> (une vente, un client), <strong>une colonne par information</strong>, aucune ligne ni colonne vide au milieu, aucune cellule fusionnée, un seul type de donnée par colonne.</p>`, `<p>A clean list: headers on the first row, <strong>one row per item</strong> (a sale, a client), <strong>one column per piece of information</strong>, no empty row or column in the middle, no merged cells, one type of data per column.</p>`),
@@ -207,11 +207,21 @@
       T(`<p>Valeur finale = capital × (1 + taux) ^ années. Le signe <code>^</code> veut dire « puissance ». 1 000 $ à 5 % sur 3 ans donnent 1 157,63 $, pas 1 150 $.</p>`, `<p>Final value = capital × (1 + rate) ^ years. The <code>^</code> sign means "power". $1,000 at 5% over 3 years gives $1,157.63, not $1,150.</p>`),
       { syntax: T('=B2*(1+B3)^B4', '=B2*(1+B3)^B4'), kw: 'interets composes valeur future placement capital compound', lessons: ['m5'] }),
     E('sales-tax-ca', 'fin', T('Taxes de vente au Canada', 'Sales taxes in Canada'), T('TPS, TVQ, TVH : selon la province.', 'GST, QST, HST: depending on the province.'),
-      T(`<p>La <strong>TPS</strong> fédérale est de 5 %. Au Québec s'ajoute la <strong>TVQ</strong> de 9,975 %. Dans certaines provinces, une <strong>TVH</strong> unique remplace les deux (13 % en Ontario). Dans les leçons, la « TVA » est un taux de taxe générique : remplace-le par ton taux réel.</p>
+      T(`<p>La <strong>TPS</strong> fédérale est de 5 %. Au Québec s'ajoute la <strong>TVQ</strong> de 9,975 %. Dans certaines provinces, une <strong>TVH</strong> unique remplace les deux (13 % en Ontario). Dans les leçons, on utilise les taux du Québec : TPS 5 % + TVQ 9,975 % = 14,975 % (la TVQ ne s'applique pas sur la TPS). Pour une autre province, remplace-les par tes taux réels.</p>
          <p>Prix avec taxes = prix × (1 + taux).</p>`,
-        `<p>Federal <strong>GST</strong> is 5%. In Quebec, <strong>QST</strong> of 9.975% is added. In some provinces a single <strong>HST</strong> replaces both (13% in Ontario). In the lessons, "VAT" is a generic tax rate: replace it with your real rate.</p>
+        `<p>Federal <strong>GST</strong> is 5%. In Quebec, <strong>QST</strong> of 9.975% is added. In some provinces a single <strong>HST</strong> replaces both (13% in Ontario). In the lessons we use Quebec's rates: GST 5% + QST 9.975% = 14.975% (QST is not charged on top of GST). For another province, swap in your real rates.</p>
          <p>Price with tax = price × (1 + rate).</p>`),
       { kw: 'tps tvq tvh gst qst hst taxe tva vente canada quebec ontario', lessons: ['f6', 'p1', 'p2'] }),
+    E('budget-basics', 'fin', T('Faire un budget mensuel', 'Building a monthly budget'), T('Prévu, dépensé, reste.', 'Planned, spent, left.'),
+      T(`<p>Un budget compare trois choses par catégorie : le <strong>prévu</strong>, le <strong>dépensé</strong> et le <strong>reste</strong> (prévu − dépensé). Un reste négatif veut dire que tu as dépassé.</p>
+         <p>Ajoute la part du revenu de chaque catégorie (<code>=C6/$B$3</code>, avec le revenu verrouillé) et une ligne de total.</p>`,
+        `<p>A budget compares three things per category: what was <strong>planned</strong>, what was <strong>spent</strong> and what is <strong>left</strong> (planned − spent). A negative amount means you went over.</p>
+         <p>Add each category's share of income (<code>=C6/$B$3</code>, with the income locked) and a total row.</p>`),
+      { syntax: T('=C6/$B$3', '=C6/$B$3'), kw: 'budget mensuel prevu depense reste revenu depasse categorie epargne', lessons: ['m6'] }),
+    E('savings-rate', 'fin', T("Le taux d'épargne",'The savings rate'), T('La part du revenu mise de côté.', 'The share of income set aside.'),
+      T(`<p>Taux d'épargne = montant épargné ÷ revenu. Avec 400 $ épargnés sur 3 400 $ de revenu, on obtient 11,8 %. Une règle courante (à adapter à ta situation) : 50 % besoins, 30 % envies, 20 % épargne.</p>`,
+        `<p>Savings rate = amount saved ÷ income. With $400 saved out of $3,400 income, you get 11.8%. A common rule of thumb (to adapt to your situation): 50% needs, 30% wants, 20% savings.</p>`),
+      { syntax: T('=C11/B3', '=C11/B3'), kw: 'taux epargne economie mettre de cote savings rate 50 30 20', lessons: ['m6'] }),
 
     /* ------------------------------------------------------------ design */
     E('palette-rules', 'design', T('Choisir une palette lisible', 'Choosing a readable palette'), T('2 ou 3 couleurs, avec des variantes claires.', '2 or 3 colours, with light variants.'),
@@ -242,6 +252,7 @@
     p1: ['download-open', 'number-format', 'markup', 'sales-tax-ca', 'absolute-ref', 'palette-rules', 'inputs-vs-results'],
     p2: ['download-open', 'countif', 'sumif', 'dates', 'data-validation', 'cond-format', 'number-format', 'freeze-panes'],
     m1: ['gross-margin', 'markup'], m2: ['pct-change', 'percent'], m3: ['break-even', 'round'], m4: ['cash-vs-profit'], m5: ['compound-interest', 'percent'],
+    m6: ['budget-basics', 'savings-rate', 'absolute-ref', 'countif', 'number-format', 'cond-format', 'inputs-vs-results', 'freeze-panes'],
   };
   // Question-specific help (key = "lessonId:questionIndex"); falls back to the lesson's list.
   window.NOTES_FOR_Q = {
