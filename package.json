@@ -5,12 +5,13 @@
   "description": "Pastel step-by-step site to learn Excel formulas, design and finance (FR/EN)",
   "scripts": {
     "start": "node serve.js",
-    "test": "node tests/verify-content.js && node tests/verify-projects.js",
+    "test": "node tests/verify-content.js && node tests/verify-projects.js && node tests/verify-notebook.js",
     "build:starters": "node tools/make-starters.js && node tools/make-projects.js"
   },
   "devDependencies": {
     "exceljs": "^4.4.0",
     "hyperformula": "3.4.0",
-    "jszip": "^3.10.1"
+    "jszip": "^3.10.1",
+    "sharp": "^0.35.5"
   }
 }

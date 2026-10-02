@@ -78,9 +78,9 @@
       title: T('Projet : une liste de ventes propre', 'Project: a clean sales list'),
       intro: T(
         `<p>On part d'une liste de ventes <strong>brute</strong> et on la transforme en tableau propre, lisible et prêt à être filtré. C'est la base de presque tous les outils que tu construiras ensuite.</p>
-         <p>Tu vas <strong>formater</strong> (dates, euros), <strong>calculer</strong> une colonne Total, puis <strong>structurer</strong> (en-tête, filtres, volets figés).</p>`,
+         <p>Tu vas <strong>formater</strong> (dates, montants), <strong>calculer</strong> une colonne Total, puis <strong>structurer</strong> (en-tête, filtres, volets figés).</p>`,
         `<p>We start from a <strong>raw</strong> list of sales and turn it into a clean, readable table ready to be filtered. It's the base of almost every tool you'll build next.</p>
-         <p>You will <strong>format</strong> (dates, euros), <strong>calculate</strong> a Total column, then <strong>structure</strong> (header, filters, frozen panes).</p>`),
+         <p>You will <strong>format</strong> (dates, amounts), <strong>calculate</strong> a Total column, then <strong>structure</strong> (header, filters, frozen panes).</p>`),
       files: {
         start: { fr: 'assets/liste-ventes-depart-fr.xlsx', en: 'assets/liste-ventes-depart-en.xlsx' },
         model: { fr: 'assets/liste-ventes-modele-fr.xlsx', en: 'assets/liste-ventes-modele-en.xlsx' },
@@ -95,12 +95,12 @@
              <p>Save your file under a new name: <kbd>F12</kbd> (Windows) or <em>File → Save a Copy</em> (iPad).</p>`),
         },
         {
-          title: T('Formate les dates et les euros', 'Format the dates and euros'),
+          title: T('Formate les dates et les montants', 'Format the dates and amounts'),
           body: T(
             `<p>Sélectionne <code>A2:A13</code>, puis <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Nombre → Date</em>.</p>
-             <p>Sélectionne <code>E2:F13</code> (prix et total), puis <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Nombre → Monétaire → €</em>. <em>iPad :</em> onglet Accueil, menu Format numérique.</p>`,
+             <p>Sélectionne <code>E2:F13</code> (prix et total), puis <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Nombre → Monétaire → $</em>. <em>iPad :</em> onglet Accueil, menu Format numérique.</p>`,
             `<p>Select <code>A2:A13</code>, then <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Number → Date</em>.</p>
-             <p>Select <code>E2:F13</code> (price and total), then <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Number → Currency → €</em>. <em>iPad:</em> Home tab, Number format menu.</p>`),
+             <p>Select <code>E2:F13</code> (price and total), then <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Number → Currency → $</em>. <em>iPad:</em> Home tab, Number format menu.</p>`),
         },
         {
           title: T('Calcule le total de chaque vente', 'Calculate each sale\'s total'),
@@ -133,8 +133,8 @@
         {
           title: T('Bonus : repère les grosses ventes', 'Bonus: spot the big sales'),
           body: T(
-            `<p>Sélectionne <code>F2:F13</code> → <em>Accueil → Mise en forme conditionnelle → Règles de mise en surbrillance → Supérieur à…</em> et choisis 100 €.</p>`,
-            `<p>Select <code>F2:F13</code> → <em>Home → Conditional Formatting → Highlight Cells Rules → Greater Than…</em> and choose €100.</p>`),
+            `<p>Sélectionne <code>F2:F13</code> → <em>Accueil → Mise en forme conditionnelle → Règles de mise en surbrillance → Supérieur à…</em> et choisis 100 $.</p>`,
+            `<p>Select <code>F2:F13</code> → <em>Home → Conditional Formatting → Highlight Cells Rules → Greater Than…</em> and choose $100.</p>`),
         },
       ],
       groupTitles: { design: T('Format et structure', 'Format and structure') },
@@ -143,9 +143,9 @@
       scenarios: [3, 7].map((k) => { const o = {}; for (let r = 2; r <= 13; r++) { o['D' + r] = ((r * k) % 9) + 1; o['E' + r] = 5 + ((r * k) % 11) + 0.5; } return o; }),
       model: (i) => { const o = {}; for (let r = 2; r <= 13; r++) o['F' + r] = i['D' + r] * i['E' + r]; return o; },
       checks: [
-        { id: 'c1', group: 'calc', kind: 'calc', cells: 'F2:F13', display: 'eur', label: T('Total = quantité × prix (F2:F13)', 'Total = quantity × price (F2:F13)') },
+        { id: 'c1', group: 'calc', kind: 'calc', cells: 'F2:F13', display: 'money', label: T('Total = quantité × prix (F2:F13)', 'Total = quantity × price (F2:F13)') },
         { id: 'd1', group: 'design', kind: 'format', type: 'date', cells: ['A2:A13'], label: T('Les dates s\'affichent comme des dates', 'Dates display as dates') },
-        { id: 'd2', group: 'design', kind: 'format', type: 'euro', cells: ['E2:F13'], label: T('Prix et totaux en euros', 'Prices and totals in euros') },
+        { id: 'd2', group: 'design', kind: 'format', type: 'money', cells: ['E2:F13'], label: T('Prix et totaux en dollars', 'Prices and totals in dollars') },
         { id: 'd3', group: 'design', kind: 'bold', cells: ['A1:F1'], label: T('En-tête en gras', 'Header in bold') },
         { id: 'd4', group: 'design', kind: 'fill', cells: ['A1:F1'], label: T('En-tête coloré', 'Coloured header') },
         { id: 's1', group: 'design', kind: 'feature', feature: 'filter', label: T('Filtres sur la liste (tableau ou filtre)', 'Filters on the list (table or filter)') },
@@ -246,9 +246,9 @@
           title: T('Calcule la somme des montants', 'Calculate the sum of amounts'),
           body: T(
             `<p>Glisse le champ <strong>Montant</strong> dans la zone <strong>Valeurs</strong>. Excel écrit « Somme de Montant » : tu as ton total par catégorie.</p>
-             <p>Mets les montants en euros : clic droit sur un total → <em>Format de nombre</em> → <em>Monétaire</em>.</p>`,
+             <p>Mets les montants en dollars : clic droit sur un total → <em>Format de nombre</em> → <em>Monétaire</em>.</p>`,
             `<p>Drag the <strong>Amount</strong> field into the <strong>Values</strong> area. Excel writes "Sum of Amount": you have your total per category.</p>
-             <p>Put amounts in euros: right-click a total → <em>Number Format</em> → <em>Currency</em>.</p>`),
+             <p>Put amounts in dollars: right-click a total → <em>Number Format</em> → <em>Currency</em>.</p>`),
         },
         {
           title: T('Bonus : croise avec les régions', 'Bonus: cross with regions'),
@@ -481,9 +481,9 @@
         {
           title: T('Mets les bons formats', 'Apply the right formats'),
           body: T(
-            `<p>Euros : <code>E8:E17</code>, <code>G8:G17</code>, <code>E4</code>, <code>E5</code>. Pourcentages : <code>F8:F17</code> et <code>E3</code>. Dates : <code>C8:C17</code> et <code>H8:H17</code>.</p>
+            `<p>Montants : <code>E8:E17</code>, <code>G8:G17</code>, <code>E4</code>, <code>E5</code>. Pourcentages : <code>F8:F17</code> et <code>E3</code>. Dates : <code>C8:C17</code> et <code>H8:H17</code>.</p>
              <p><kbd>Ctrl</kbd> + clic pour sélectionner plusieurs zones, puis <kbd>Ctrl</kbd> + <kbd>1</kbd>.</p>`,
-            `<p>Euros: <code>E8:E17</code>, <code>G8:G17</code>, <code>E4</code>, <code>E5</code>. Percentages: <code>F8:F17</code> and <code>E3</code>. Dates: <code>C8:C17</code> and <code>H8:H17</code>.</p>
+            `<p>Amounts: <code>E8:E17</code>, <code>G8:G17</code>, <code>E4</code>, <code>E5</code>. Percentages: <code>F8:F17</code> and <code>E3</code>. Dates: <code>C8:C17</code> and <code>H8:H17</code>.</p>
              <p><kbd>Ctrl</kbd> + click to select several areas, then <kbd>Ctrl</kbd> + <kbd>1</kbd>.</p>`),
         },
         {
@@ -547,12 +547,12 @@
         return o;
       },
       checks: [
-        { id: 'c1', group: 'calc', kind: 'calc', cells: 'G8:G17', display: 'eur', label: T('Montant TTC (G8:G17)', 'Amount incl. VAT (G8:G17)') },
+        { id: 'c1', group: 'calc', kind: 'calc', cells: 'G8:G17', display: 'money', label: T('Montant TTC (G8:G17)', 'Amount incl. VAT (G8:G17)') },
         { id: 'c2', group: 'calc', kind: 'calc', cells: 'H8:H17', display: 'num', label: T('Date limite (H8:H17)', 'Deadline (H8:H17)') },
         { id: 'c3', group: 'calc', kind: 'calc', cells: 'B3:B6', display: 'num', label: T('Nombres de devis par statut (B3:B6)', 'Number of quotes by status (B3:B6)') },
         { id: 'c4', group: 'calc', kind: 'calc', cells: 'E3', display: 'pct', tol: 0.0005, label: T('Taux de conversion (E3)', 'Conversion rate (E3)') },
-        { id: 'c5', group: 'calc', kind: 'calc', cells: 'E4:E5', display: 'eur', label: T('Montants totaux (E4:E5)', 'Total amounts (E4:E5)') },
-        { id: 'd1', group: 'design', kind: 'format', type: 'euro', cells: ['E8:E17', 'G8:G17', 'E4', 'E5'], label: T('Montants en euros', 'Amounts in euros') },
+        { id: 'c5', group: 'calc', kind: 'calc', cells: 'E4:E5', display: 'money', label: T('Montants totaux (E4:E5)', 'Total amounts (E4:E5)') },
+        { id: 'd1', group: 'design', kind: 'format', type: 'money', cells: ['E8:E17', 'G8:G17', 'E4', 'E5'], label: T('Montants en dollars', 'Amounts in dollars') },
         { id: 'd2', group: 'design', kind: 'format', type: 'percent', cells: ['F8:F17', 'E3'], label: T('Taux en pourcentage', 'Rates as percentages') },
         { id: 'd3', group: 'design', kind: 'format', type: 'date', cells: ['C8:C17', 'H8:H17'], label: T('Dates au format date', 'Dates in date format') },
         { id: 'd4', group: 'design', kind: 'bold', cells: ['A1'], label: T('Titre en gras', 'Title in bold') },
@@ -565,8 +565,8 @@
       explain: T(
         `Ton outil réagit maintenant tout seul : change un statut, et les compteurs, le taux de conversion, les montants et la couleur suivent. C'est la différence entre un tableau qu'on <em>remplit</em> et un tableau qui <em>travaille</em>.`,
         `Your tool now reacts by itself: change a status and the counters, the conversion rate, the amounts and the colour all follow. That's the difference between a table you <em>fill in</em> and a table that <em>works</em>.`),
-      pro: T('Astuce de pro : dans <code>NB.SI</code>, le critère accepte aussi des conditions : <code>"&gt;1000"</code> compte les devis de plus de 1000 €. Pour plusieurs critères à la fois, passe à <code>NB.SI.ENS</code>.',
-             'Pro tip: in <code>COUNTIF</code>, the criterion also accepts conditions: <code>"&gt;1000"</code> counts quotes above €1000. For several criteria at once, move up to <code>COUNTIFS</code>.'),
+      pro: T('Astuce de pro : dans <code>NB.SI</code>, le critère accepte aussi des conditions : <code>"&gt;1000"</code> compte les devis de plus de 1000 $. Pour plusieurs critères à la fois, passe à <code>NB.SI.ENS</code>.',
+             'Pro tip: in <code>COUNTIF</code>, the criterion also accepts conditions: <code>"&gt;1000"</code> counts quotes above $1000. For several criteria at once, move up to <code>COUNTIFS</code>.'),
     },
   ]);
 
@@ -595,19 +595,19 @@
         [T('Soleil', 'Sun'), 80, 48, null],
         [T('Étoile', 'Star'), 30, 21, null],
       ],
-      fmt: { B: 'eur', C: 'eur', D: 'pct' },
+      fmt: { B: 'money', C: 'money', D: 'pct' },
       target: 'D2',
       tests: [{ expect: 0.4 }, { set: { B2: 100, C2: 75 }, expect: 0.25 }, { set: { B2: 20, C2: 20 }, expect: 0 }],
       hints: [
-        T('Commence par la marge en euros : prix moins coût.', 'Start with the margin in euros: price minus cost.'),
+        T('Commence par la marge en dollars : prix moins coût.', 'Start with the margin in dollars: price minus cost.'),
         T('Puis divise cette marge par le <strong>prix de vente</strong> (pas par le coût).', 'Then divide that margin by the <strong>selling price</strong> (not by the cost).'),
         T('Tape : <code>=(B2-C2)/B2</code>', 'Type: <code>=(B2-C2)/B2</code>'),
       ],
       solution: T('=(B2-C2)/B2', '=(B2-C2)/B2'),
-      explain: T(`Les parenthèses sont essentielles : sans elles, Excel diviserait seulement <code>C2</code> par <code>B2</code> avant de soustraire. Ici, 50 € vendus pour 30 € de coût donnent 40 % de marge brute.`,
-                 `The parentheses are essential: without them, Excel would divide only <code>C2</code> by <code>B2</code> before subtracting. Here, €50 sold for a €30 cost gives a 40% gross margin.`),
-      pro: T('À savoir : ne confonds pas ce taux (calculé sur le prix de vente) avec le <em>taux de marge</em> « commercial » (calculé sur le coût). Même marge en euros, deux pourcentages différents.',
-             'Good to know: don\'t confuse this rate (computed on the selling price) with the "markup" (computed on cost). Same margin in euros, two different percentages.'),
+      explain: T(`Les parenthèses sont essentielles : sans elles, Excel diviserait seulement <code>C2</code> par <code>B2</code> avant de soustraire. Ici, 50 $ vendus pour 30 $ de coût donnent 40 % de marge brute.`,
+                 `The parentheses are essential: without them, Excel would divide only <code>C2</code> by <code>B2</code> before subtracting. Here, $50 sold for a $30 cost gives a 40% gross margin.`),
+      pro: T('À savoir : ne confonds pas ce taux (calculé sur le prix de vente) avec le <em>taux de marge</em> « commercial » (calculé sur le coût). Même marge en dollars, deux pourcentages différents.',
+             'Good to know: don\'t confuse this rate (computed on the selling price) with the "markup" (computed on cost). Same margin in dollars, two different percentages.'),
     },
     {
       id: 'm2', type: 'practice', level: 1, xp: 12, requires: ['f1'],
@@ -624,7 +624,7 @@
         [T('Février', 'February'), 1380, null],
         [T('Mars', 'March'), 1242, null],
       ],
-      fmt: { B: 'eur', C: 'pct' },
+      fmt: { B: 'money', C: 'pct' },
       target: 'C3',
       tests: [{ expect: 0.15 }, { set: { B3: 900 }, expect: -0.25 }, { set: { B2: 1000, B3: 1100 }, expect: 0.1 }],
       hints: [
@@ -655,7 +655,7 @@
         [null, null],
         [T('Unités à vendre', 'Units to sell'), null],
       ],
-      fmt: { B2: 'eur', B3: 'eur', B4: 'eur' },
+      fmt: { B2: 'money', B3: 'money', B4: 'money' },
       target: 'B6',
       tests: [{ expect: 214 }, { set: { B2: 1500, B3: 30, B4: 15 }, expect: 100 }, { set: { B2: 2000, B4: 12 }, expect: 154 }],
       mustUse: { fr: ['ARRONDI.SUP'], en: ['ROUNDUP'] },
@@ -665,8 +665,8 @@
         T('Tape : <code>=ARRONDI.SUP(B2/(B3-B4);0)</code>', 'Type: <code>=ROUNDUP(B2/(B3-B4),0)</code>'),
       ],
       solution: T('=ARRONDI.SUP(B2/(B3-B4);0)', '=ROUNDUP(B2/(B3-B4),0)'),
-      explain: T(`Chaque bougie vendue laisse 15 € pour couvrir les charges. 3 200 ÷ 15 = 213,3, donc il en faut <strong>214</strong> : arrondi au-dessus, car 213 ne suffirait pas. Un simple <code>ARRONDI</code> aurait donné 213 et te ferait croire que tu es rentable un peu trop tôt.`,
-                 `Each candle sold leaves €15 to cover costs. 3,200 ÷ 15 = 213.3, so you need <strong>214</strong>: rounded up, because 213 wouldn't be enough. A plain <code>ROUND</code> would give 213 and make you think you break even slightly too early.`),
+      explain: T(`Chaque bougie vendue laisse 15 $ pour couvrir les charges. 3 200 ÷ 15 = 213,3, donc il en faut <strong>214</strong> : arrondi au-dessus, car 213 ne suffirait pas. Un simple <code>ARRONDI</code> aurait donné 213 et te ferait croire que tu es rentable un peu trop tôt.`,
+                 `Each candle sold leaves $15 to cover costs. 3,200 ÷ 15 = 213.3, so you need <strong>214</strong>: rounded up, because 213 wouldn't be enough. A plain <code>ROUND</code> would give 213 and make you think you break even slightly too early.`),
       pro: T('Astuce de pro : multiplie ce nombre par le prix pour obtenir le <em>chiffre d\'affaires</em> à atteindre. C\'est souvent le chiffre qu\'on présente à une banque.',
              'Pro tip: multiply this number by the price to get the <em>revenue</em> to reach. It\'s often the number you present to a bank.'),
     },
@@ -685,7 +685,7 @@
         [T('Février', 'February'), 4200, 4600, null],
         [T('Mars', 'March'), 6000, 3500, null],
       ],
-      fmt: { B: 'eur', C: 'eur', D: 'eur' },
+      fmt: { B: 'money', C: 'money', D: 'money' },
       target: 'D3',
       tests: [{ expect: 800 }, { set: { D2: 500, B3: 1000, C3: 1800 }, expect: -300 }, { set: { B3: 0, C3: 0 }, expect: 1200 }],
       hints: [
@@ -715,7 +715,7 @@
         [T('Années', 'Years'), 3],
         [T('Valeur finale', 'Final value'), null],
       ],
-      fmt: { B2: 'eur', B3: 'pct', B5: 'eur' },
+      fmt: { B2: 'money', B3: 'pct', B5: 'money' },
       target: 'B5',
       tests: [{ expect: 1157.625 }, { set: { B2: 2000, B3: 0.1, B4: 2 }, expect: 2420 }, { set: { B4: 0 }, expect: 1000 }],
       hints: [
@@ -724,8 +724,8 @@
         T('Tape : <code>=B2*(1+B3)^B4</code>', 'Type: <code>=B2*(1+B3)^B4</code>'),
       ],
       solution: T('=B2*(1+B3)^B4', '=B2*(1+B3)^B4'),
-      explain: T(`1 000 € à 5 % pendant 3 ans donnent 1 157,63 €, et non 1 150 € (qui serait 3 × 5 %). Les 7,63 € d'écart, ce sont les intérêts sur les intérêts. Plus la durée est longue, plus l'écart grandit.`,
-                 `€1,000 at 5% for 3 years gives €1,157.63, not €1,150 (which would be 3 × 5%). The €7.63 difference is interest on interest. The longer the period, the more the gap grows.`),
+      explain: T(`1 000 $ à 5 % pendant 3 ans donnent 1 157,63 $, et non 1 150 $ (qui serait 3 × 5 %). Les 7,63 $ d'écart, ce sont les intérêts sur les intérêts. Plus la durée est longue, plus l'écart grandit.`,
+                 `$1,000 at 5% for 3 years gives $1,157.63, not $1,150 (which would be 3 × 5%). The $7.63 difference is interest on interest. The longer the period, the more the gap grows.`),
       pro: T('Astuce de pro : Excel a des fonctions financières toutes prêtes (<code>VC</code>, <code>VA</code>, <code>VPM</code>…). Comprendre la formule à la main te permet de les utiliser sans te tromper.',
              'Pro tip: Excel has ready-made financial functions (<code>FV</code>, <code>PV</code>, <code>PMT</code>…). Understanding the formula by hand lets you use them without mistakes.'),
     },

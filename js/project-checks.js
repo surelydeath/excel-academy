@@ -13,8 +13,8 @@ const ProjectChecks = (() => {
       shared: (c) => `La formule de <code>${c}</code> a été recopiée depuis une autre cellule et je ne peux pas la relire. Retape-la directement dans la cellule.`,
       wrong: (c, got, exp) => `Avec tes valeurs, <code>${c}</code> affiche <strong>${got}</strong> au lieu de <strong>${exp}</strong>.`,
       hardcoded: (c) => `Ça marche avec tes chiffres, mais quand je change les valeurs de départ, <code>${c}</code> ne suit plus. Ta formule doit utiliser les cellules de départ plutôt que des nombres ou des textes tapés.`,
-      euro: (cells) => `Pas de format € sur : <code>${cells}</code>. (Ctrl + 1 → Nombre → Monétaire → €)`,
-      euroOther: (cells) => `Ces cellules ont une devise, mais pas l'euro : <code>${cells}</code>.`,
+      money: (cells) => `Pas de format $ sur : <code>${cells}</code>. (Ctrl + 1 → Nombre → Monétaire → $)`,
+      moneyOther: (cells) => `Ces cellules sont en euros ou dans une autre devise, pas en dollars : <code>${cells}</code>. (Ctrl + 1 → Nombre → Monétaire → $)`,
       percent: (cells) => `Pas de format % sur : <code>${cells}</code>. (bouton % de l'onglet Accueil)`,
       date: (cells) => `Pas de format date sur : <code>${cells}</code>. (Ctrl + 1 → Nombre → Date)`,
       fill: (cells) => `Pas de couleur de fond sur : <code>${cells}</code>.`,
@@ -44,8 +44,8 @@ const ProjectChecks = (() => {
       shared: (c) => `The formula in <code>${c}</code> was copied from another cell and I can't read it back. Retype it directly in the cell.`,
       wrong: (c, got, exp) => `With your values, <code>${c}</code> shows <strong>${got}</strong> instead of <strong>${exp}</strong>.`,
       hardcoded: (c) => `It works with your numbers, but when I change the starting values, <code>${c}</code> doesn't follow. Your formula must use the starting cells instead of typed numbers or text.`,
-      euro: (cells) => `No € format on: <code>${cells}</code>. (Ctrl + 1 → Number → Currency → €)`,
-      euroOther: (cells) => `These cells have a currency, but not euros: <code>${cells}</code>.`,
+      money: (cells) => `No $ format on: <code>${cells}</code>. (Ctrl + 1 → Number → Currency → $)`,
+      moneyOther: (cells) => `These cells are in euros or another currency, not dollars: <code>${cells}</code>. (Ctrl + 1 → Number → Currency → $)`,
       percent: (cells) => `No % format on: <code>${cells}</code>. (the % button on the Home tab)`,
       date: (cells) => `No date format on: <code>${cells}</code>. (Ctrl + 1 → Number → Date)`,
       fill: (cells) => `No fill colour on: <code>${cells}</code>.`,
@@ -127,10 +127,10 @@ const ProjectChecks = (() => {
   }
 
   const fmtNum = (v, lang, kind) => {
-    const loc = lang === 'fr' ? 'fr-FR' : 'en-US';
+    const loc = lang === 'fr' ? 'fr-CA' : 'en-CA';
     if (kind === 'pct') return new Intl.NumberFormat(loc, { style: 'percent', maximumFractionDigits: 1 }).format(v);
     if (kind === 'num') return new Intl.NumberFormat(loc, { maximumFractionDigits: 2 }).format(v);
-    return new Intl.NumberFormat(loc, { style: 'currency', currency: 'EUR' }).format(v);
+    return new Intl.NumberFormat(loc, { style: 'currency', currency: 'CAD' }).format(v);
   };
 
   const norm = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase();
@@ -187,14 +187,14 @@ const ProjectChecks = (() => {
         }
         case 'format': {
           const cells = expandAll(check.cells);
-          const ok = (c) => c && (check.type === 'euro' ? c.style.euro : check.type === 'percent' ? c.style.percent : c.style.date);
+          const ok = (c) => c && (check.type === 'money' ? (c.style.money || c.style.currencyBuiltin) : check.type === 'percent' ? c.style.percent : c.style.date);
           const bad = cells.filter((a) => !ok(sheet.cells[a]));
           let msg = '';
           if (bad.length) {
             const list = bad.length > 6 ? bad.slice(0, 6).join(', ') + '…' : bad.join(', ');
             if (check.type === 'percent') msg = M.percent(list);
             else if (check.type === 'date') msg = M.date(list);
-            else msg = bad.every((a) => sheet.cells[a] && sheet.cells[a].style.currencyBuiltin) ? M.euroOther(list) : M.euro(list);
+            else msg = bad.some((a) => sheet.cells[a] && sheet.cells[a].style.euroSign) ? M.moneyOther(list) : M.money(list);
           }
           push(check, !bad.length, msg);
           break;

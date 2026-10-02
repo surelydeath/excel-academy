@@ -7,8 +7,13 @@
   <meta name="description" content="Apprends Excel et la finance pas à pas : formules, outils pastel, états financiers.">
   <meta name="theme-color" content="#FBFAFD">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Excel Académie">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='12' height='12' rx='3.5' fill='%23BFE0FB'/%3E%3Crect x='18' y='2' width='12' height='12' rx='3.5' fill='%23FAC3DC'/%3E%3Crect x='2' y='18' width='12' height='12' rx='3.5' fill='%23C5EBD2'/%3E%3C/svg%3E">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/icons/favicon-64.png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -16,21 +21,30 @@
 </head>
 <body>
   <div class="atmo" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i></div>
-  <header class="top" id="topbar"></header>
-  <main id="app"></main>
-  <footer id="footerText"></footer>
-  <nav class="dock" id="dock" aria-label="Navigation"></nav>
+  <div class="shell">
+    <aside class="side" id="side"></aside>
+    <div class="main">
+      <header class="top" id="topbar"></header>
+      <main id="app"></main>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/hyperformula@3.4.0/dist/hyperformula.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hyperformula@3.4.0/dist/languages/frFR.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="content/chapters.js"></script>
   <script src="content/lessons-2.js"></script>
+  <script src="content/notebook.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/icons.js"></script>
   <script src="js/engine.js"></script>
+  <script src="js/search.js"></script>
   <script src="js/xlsx-reader.js"></script>
   <script src="js/project-checks.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/notebook-ui.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/lessons.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

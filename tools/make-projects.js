@@ -14,8 +14,8 @@ const PASTEL = { pink: 'FFF9B9D0', blue: 'FFA8D3F5', peach: 'FFFDE9D8', green: '
 const serial = (y, m, d) => Math.round((Date.UTC(y, m - 1, d) - Date.UTC(1899, 11, 30)) / 864e5);
 const fill = (argb) => ({ type: 'pattern', pattern: 'solid', fgColor: { argb } });
 const FMT = {
-  fr: { euro: '#,##0.00\\ "€"', date: 'dd/mm/yyyy' },
-  en: { euro: '"€"#,##0.00', date: 'mm/dd/yyyy' },
+  fr: { money: '#,##0.00\\ "$"', date: 'dd/mm/yyyy' },
+  en: { money: '"$"#,##0.00', date: 'mm/dd/yyyy' },
 };
 
 /* ------------------------------------------------------------------ quote tracker */
@@ -84,7 +84,7 @@ async function quoteModel(lang) {
     const n = 8 + i;
     ws.getCell('G' + n).value = { formula: `E${n}*(1+F${n})`, result: ttc[i] };
     ws.getCell('H' + n).value = { formula: `C${n}+D${n}`, result: r.date + r.days };
-    ws.getCell('E' + n).numFmt = f.euro; ws.getCell('G' + n).numFmt = f.euro;
+    ws.getCell('E' + n).numFmt = f.money; ws.getCell('G' + n).numFmt = f.money;
     ws.getCell('F' + n).numFmt = '0.0%';
     ws.getCell('H' + n).numFmt = f.date;
   });
@@ -95,8 +95,8 @@ async function quoteModel(lang) {
   ws.getCell('B5').value = { formula: 'COUNTIF(I8:I17,K9)', result: pen.length };
   ws.getCell('B6').value = { formula: 'COUNTIF(I8:I17,K10)', result: dec.length };
   ws.getCell('E3').value = { formula: 'B4/B3', result: acc.length / rows.length }; ws.getCell('E3').numFmt = '0.0%';
-  ws.getCell('E4').value = { formula: 'SUM(G8:G17)', result: total }; ws.getCell('E4').numFmt = f.euro;
-  ws.getCell('E5').value = { formula: 'SUMIF(I8:I17,K8,G8:G17)', result: accTotal }; ws.getCell('E5').numFmt = f.euro;
+  ws.getCell('E4').value = { formula: 'SUM(G8:G17)', result: total }; ws.getCell('E4').numFmt = f.money;
+  ws.getCell('E5').value = { formula: 'SUMIF(I8:I17,K8,G8:G17)', result: accTotal }; ws.getCell('E5').numFmt = f.money;
   ['B3', 'B4', 'B5', 'B6', 'E3', 'E4', 'E5'].forEach((a) => { ws.getCell(a).fill = fill(PASTEL.green); ws.getCell(a).font = { bold: true }; });
 
   ws.getCell('I8').dataValidation = undefined;
@@ -140,7 +140,7 @@ async function salesModel(lang) {
   SALES.forEach((r, i) => {
     const n = 2 + i;
     ws.getCell('F' + n).value = { formula: `D${n}*E${n}`, result: r[2] * r[3] };
-    ws.getCell('A' + n).numFmt = f.date; ws.getCell('E' + n).numFmt = f.euro; ws.getCell('F' + n).numFmt = f.euro;
+    ws.getCell('A' + n).numFmt = f.date; ws.getCell('E' + n).numFmt = f.money; ws.getCell('F' + n).numFmt = f.money;
   });
   for (let c = 1; c <= 6; c++) { const h = ws.getCell(1, c); h.fill = fill(PASTEL.blue); h.font = { bold: true }; }
   ws.views = [{ state: 'frozen', ySplit: 1 }];

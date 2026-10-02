@@ -15,13 +15,13 @@ const LABELS = {
     sheet: 'Calculateur', title: 'Calculateur de prix', head: ['Élément', 'Valeur'],
     rows: ['Coût des matières', 'Temps de fabrication (min)', 'Taux horaire', 'Autres coûts (emballage…)', 'Taux de marge souhaité', 'TVA'],
     out: ['Coût de revient', 'Prix de vente HT', 'Prix de vente TTC', 'Bénéfice par produit', 'Taux de marque'],
-    euro: '#,##0.00\\ "€"',
+    money: '#,##0.00\\ "$"',
   },
   en: {
     sheet: 'Calculator', title: 'Price calculator', head: ['Item', 'Value'],
     rows: ['Material cost', 'Production time (min)', 'Hourly rate', 'Other costs (packaging…)', 'Desired markup', 'VAT'],
     out: ['Cost price', 'Selling price excl. VAT', 'Selling price incl. VAT', 'Profit per product', 'Margin rate'],
-    euro: '"€"#,##0.00',
+    money: '"$"#,##0.00',
   },
 };
 const INPUTS = [5.5, 30, 15, 1.58, 0.5, 0.2];
@@ -57,7 +57,7 @@ async function model(lang) {
   const r = { B10: COST, B11: HT, B12: TTC, B13: HT - COST, B14: (HT - COST) / HT };
   Object.keys(f).forEach((a) => { ws.getCell(a).value = { formula: f[a], result: r[a] }; });
 
-  ['B3', 'B5', 'B6', 'B10', 'B11', 'B12', 'B13'].forEach((a) => { ws.getCell(a).numFmt = L.euro; });
+  ['B3', 'B5', 'B6', 'B10', 'B11', 'B12', 'B13'].forEach((a) => { ws.getCell(a).numFmt = L.money; });
   ['B7', 'B8'].forEach((a) => { ws.getCell(a).numFmt = '0%'; });
   ws.getCell('B14').numFmt = '0.0%';
   for (let row = 3; row <= 8; row++) ws.getCell('B' + row).fill = fill(PASTEL.peach);

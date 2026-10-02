@@ -1,24 +1,24 @@
 # Excel Académie 🌸
 
-A pastel, step-by-step learning site for Excel, pastel dashboards and finance.
-French by default, English with one click. No build step, no framework: plain HTML/CSS/JS.
+A pastel study site for Excel, pastel dashboards and finance. French by default, English with one click.
+Plain HTML/CSS/JS, no framework and no build step. Currency is Canadian dollars ($).
 
-Three tracks on the home screen:
+## What it does
 
-1. **Excel skills**: tables, formulas, pivot tables, tricks (levels 1 to 5)
-2. **Visuals & pastel tools**: design and real build projects
-3. **Finance**: financial statements and financial models
-
-Two kinds of practice:
-
-- **Practice inside the site**: a mini Excel where you type a formula and it is checked on changed data.
-- **Build in real Excel**: a step-by-step project with a starter `.xlsx`. When finished, you upload your
-  file and the site checks formulas, formats and design **in your browser** (the file is never sent anywhere).
+- **Dashboard** with where you are, what's next, what to review and your badges, plus a sidebar to navigate.
+- **Three tracks:** Excel skills (A), Visuals & pastel tools (B), Finance (C).
+- **Every lesson is a few short screens** (no long scrolling):
+  - *practice*: understand → practise in a mini Excel → remember
+  - *quiz*: one question per screen, with "Besoin d'aide ?" and "Voir la réponse"
+  - *project*: download the starter → "did it download?" → open it in Excel → one step at a time → upload the `.xlsx` to be checked (in the browser, never sent anywhere)
+- **Notebook (Carnet):** 60 searchable entries (functions, basics, shortcuts, errors, finance, design). Open it from the sidebar, the search button, the `/` key, or the help button on any lesson or question.
+- **Soft prerequisites:** "recommended before" lessons with *I already know this* and *Continue anyway*. Nothing is locked.
+- **First visit:** "Where are you at?" marks what she already knows.
 
 ## Run it on your computer
 
 ```bash
-npm install      # only needed for the tests and the starter files
+npm install      # only needed for the tests and the generators
 npm start        # then open http://localhost:4173
 ```
 
@@ -28,34 +28,28 @@ npm start        # then open http://localhost:4173
 |---|---|
 | Tracks, chapters, first lessons (FR + EN) | `content/chapters.js` |
 | More lessons: tables, pivot, tools, design, quote tracker, finance models | `content/lessons-2.js` |
-| Screens and progress | `js/app.js` |
+| Notebook entries and which lesson uses which | `content/notebook.js` |
+| App core: state, progress, prerequisites | `js/core.js` |
+| Shell and router (sidebar, top bar) | `js/app.js` |
+| Dashboard, track, chapter, progress, welcome screens | `js/views.js` |
+| Lesson screens (practice, quiz, project wizard) | `js/lessons.js` |
+| Notebook page and help drawer | `js/notebook-ui.js`, `js/search.js` |
 | Formula checker for practice lessons | `js/engine.js` |
 | Reads uploaded .xlsx files | `js/xlsx-reader.js` |
 | Project checks | `js/project-checks.js` |
-| Colours (all in `:root`) | `css/style.css` |
-| Starter / model Excel files | `assets/` (made by `tools/make-starters.js` and `tools/make-projects.js`, run `npm run build:starters`) |
+| UI text (FR + EN) | `js/i18n.js` |
+| Colours, spacing, layout | `css/style.css` (tokens in `:root`) |
+| Starter / model Excel files | `assets/` (made by `npm run build:starters`) |
+| App icons | `assets/icons/` (made by `node tools/make-icons.js`) |
 
 ## Add a lesson or project
 
-Copy an existing one in `content/chapters.js`. Lesson types: `practice` (formula in the mini sheet),
-`quiz`, `build` (Excel project with upload check). A project can check formulas (re-calculated on changed values), formats, fills, dropdowns, conditional-format rules, frozen panes, filters/tables, charts and pivot tables. Every text is bilingual: `T('français', 'english')`.
+Copy an existing one in `content/chapters.js` or `content/lessons-2.js`. Lesson types: `practice`, `quiz`, `build`.
+Every text is bilingual: `T('français', 'english')`.
 
-For a new build project: add its starter and model in `tools/make-starters.js`, run
-`npm run build:starters`, then describe `steps`, `inputs`, `scenarios`, `model` and `checks` in the lesson.
-
-## Prerequisites (recommended-before links)
-
-Add `requires: ['f1', 'f2']` (lesson ids) to a lesson, or to a whole chapter. If those lessons are not done,
-the learner sees a soft "Before you start" panel with a link to each one, an "I already know this" button
-and "Continue anyway". Nothing is ever locked. The home screen's Continue button also follows the path:
-if the next lesson has unmet prerequisites, it points to the first one of those instead.
-
-## Look and feel
-
-Everything visual is in `css/style.css`: colour tokens, type and radii are at the top (`:root`).
-Each track has its own pastel (skills = sky, visual = rose, finance = mint). Icons are in `js/icons.js`.
-Motion is kept to three things: the hero blobs and headline reveal, a short fade between screens,
-and the progress segments popping when a lesson is completed. It all respects "reduce motion".
+- Add `requires: ['f1', 'f2']` to a lesson (or a chapter) for the prerequisite warning.
+- Add its help entries to `NOTES_FOR` in `content/notebook.js` (and `NOTES_FOR_Q` for individual quiz questions).
+- A *build* project can check formulas (re-calculated on changed values), formats, fills, dropdowns, conditional-format rules, frozen panes, filters/tables, charts and pivot tables. Add its starter and model in `tools/make-starters.js` or `tools/make-projects.js`, run `npm run build:starters`, then describe `steps`, `inputs`, `scenarios`, `model` and `checks`.
 
 ## Tests
 
@@ -63,14 +57,17 @@ and the progress segments popping when a lesson is completed. It all respects "r
 npm test
 ```
 
-- `tests/verify-content.js`: every practice solution passes its own tests in FR and EN, and a typed-in number does not.
-- `tests/verify-projects.js`: the finished model passes every check, the plain starter fails, and sneaky files
-  (typed numbers, wrong formulas, same colours, dollars instead of euros) are caught.
+- `verify-content.js`: every practice solution passes its tests in FR and EN, and a typed-in number does not.
+- `verify-projects.js`: each finished model passes, each starter fails, and sneaky files (typed numbers, hard-coded values, wrong colours, euros instead of dollars, missing dropdowns, simulated pivot tables) are caught.
+- `verify-notebook.js`: every help link points to a real entry, everything exists in FR and EN, and search ranks the right entry first.
 
 ## Put it online
 
 The site is on GitHub Pages: every push to `main` updates it. The formula engine and the zip library
-are loaded from the jsDelivr CDN (pinned versions in `index.html`).
+come from the jsDelivr CDN (pinned versions in `index.html`).
+
+**Home-screen icon:** on iPad, open the site in Safari → Share → *Add to Home Screen*. If an old shortcut shows a plain "E",
+delete it and add it again (iOS keeps the old icon).
 
 ## Where progress is saved
 

@@ -17,7 +17,7 @@
                  les données pour vérifier que la formule est "vivante")
    - mustUse  : fonctions obligatoires { fr:[...], en:[...] }
    - mustRef  : morceaux obligatoires dans la formule (ex. '$E$1')
-   - fmt      : formats { B:'eur', E1:'pct' } (colonne ou cellule)
+   - fmt      : formats { B:'money', E1:'pct' } (colonne ou cellule)
    ============================================================ */
 
 const T = (fr, en) => ({ fr, en });
@@ -79,7 +79,7 @@ window.CHAPTERS = [
           [T('Soleil', 'Sun'), 15, 2, null],
           [T('Étoile', 'Star'), 9, 5, null],
         ],
-        fmt: { B: 'eur', D: 'eur' },
+        fmt: { B: 'money', D: 'money' },
         target: 'D2',
         tests: [{ expect: 36 }, { set: { B2: 20, C2: 4 }, expect: 80 }],
         hints: [
@@ -115,7 +115,7 @@ window.CHAPTERS = [
           [T('Avril', 'April'), 1100],
           [T('Total', 'Total'), null],
         ],
-        fmt: { B: 'eur' },
+        fmt: { B: 'money' },
         target: 'B6',
         tests: [{ expect: 4680 }, { set: { B2: 100, B3: 200, B4: 300, B5: 400 }, expect: 1000 }],
         mustUse: { fr: ['SOMME'], en: ['SUM'] },
@@ -148,7 +148,7 @@ window.CHAPTERS = [
           [T('Avril', 'April'), 1100],
           [T('Moyenne', 'Average'), null],
         ],
-        fmt: { B: 'eur' },
+        fmt: { B: 'money' },
         target: 'B6',
         tests: [{ expect: 1170 }, { set: { B2: 100, B3: 200, B4: 300, B5: 400 }, expect: 250 }],
         mustUse: { fr: ['MOYENNE'], en: ['AVERAGE'] },
@@ -181,7 +181,7 @@ window.CHAPTERS = [
           [T('Avril', 'April'), 1100],
           [T('Écart', 'Gap'), null],
         ],
-        fmt: { B: 'eur' },
+        fmt: { B: 'money' },
         target: 'B6',
         tests: [{ expect: 480 }, { set: { B2: 100, B3: 200, B4: 300, B5: 400 }, expect: 300 }],
         mustUse: { fr: ['MAX', 'MIN'], en: ['MAX', 'MIN'] },
@@ -209,15 +209,15 @@ window.CHAPTERS = [
           `<p><code>IF</code> lets Excel choose between two results depending on a condition.</p>
            <p><code>=IF(condition, if_true, if_false)</code></p>
            <p>Example: <code>=IF(B2&gt;=1000, "Top", "Improve")</code>. Comparison operators: <code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code> <code>=</code> <code>&lt;&gt;</code> (not equal).</p>`),
-        task: T('Léa gagne un <strong>bonus de 100 €</strong> si ses ventes sont <strong>supérieures ou égales à 1000 €</strong>, sinon 0. Calcule le bonus de Léa.',
-                'Léa earns a <strong>€100 bonus</strong> if her sales are <strong>greater than or equal to €1000</strong>, otherwise 0. Calculate Léa\'s bonus.'),
+        task: T('Léa gagne un <strong>bonus de 100 $</strong> si ses ventes sont <strong>supérieures ou égales à 1000 $</strong>, sinon 0. Calcule le bonus de Léa.',
+                'Léa earns a <strong>$100 bonus</strong> if her sales are <strong>greater than or equal to $1000</strong>, otherwise 0. Calculate Léa\'s bonus.'),
         grid: [
           [T('Vendeur', 'Seller'), T('Ventes', 'Sales'), 'Bonus'],
           ['Léa', 1800, null],
           ['Tom', 950, null],
           ['Sam', 1200, null],
         ],
-        fmt: { B: 'eur', C: 'eur' },
+        fmt: { B: 'money', C: 'money' },
         target: 'C2',
         tests: [{ expect: 100 }, { set: { B2: 500 }, expect: 0 }, { set: { B2: 1000 }, expect: 100 }],
         mustUse: { fr: ['SI'], en: ['IF'] },
@@ -249,7 +249,7 @@ window.CHAPTERS = [
           [T('Soleil', 'Sun'), 80, null],
           [T('Étoile', 'Star'), 30, null],
         ],
-        fmt: { B: 'eur', C: 'eur', E1: 'pct' },
+        fmt: { B: 'money', C: 'money', E1: 'pct' },
         target: 'C2',
         tests: [{ expect: 60 }, { set: { B2: 100, E1: 0.1 }, expect: 110 }],
         mustRef: ['$E$1'],
@@ -285,7 +285,7 @@ window.CHAPTERS = [
           [T('Savon', 'Soap'), 60],
           [T('Bougie', 'Candle'), 90],
         ],
-        fmt: { B: 'eur', E: 'eur' },
+        fmt: { B: 'money', E: 'money' },
         target: 'E2',
         tests: [{ expect: 410 }, { set: { D2: T('Savon', 'Soap') }, expect: 140 }],
         mustUse: { fr: ['SOMME.SI'], en: ['SUMIF'] },
@@ -360,7 +360,7 @@ window.CHAPTERS = [
           ['Léa', 1800, null],
           ['Sam', 300, null],
         ],
-        fmt: { B: 'eur' },
+        fmt: { B: 'money' },
         target: 'C2',
         tests: [
           { expect: T('Argent', 'Silver') },
@@ -398,7 +398,7 @@ window.CHAPTERS = [
           ['S01', T('Savon Menthe', 'Mint Soap'), 6],
           ['S02', T('Savon Miel', 'Honey Soap'), 7],
         ],
-        fmt: { C: 'eur', F: 'eur' },
+        fmt: { C: 'money', F: 'money' },
         target: 'F2',
         tests: [{ expect: 6 }, { set: { E2: 'B02' }, expect: 15 }, { set: { E2: 'S02' }, expect: 7 }],
         mustUse: { fr: ['RECHERCHEV'], en: ['VLOOKUP'] },
@@ -409,8 +409,8 @@ window.CHAPTERS = [
         ],
         solution: T('=RECHERCHEV(E2;A2:C5;3;FAUX)', '=VLOOKUP(E2,A2:C5,3,FALSE)'),
         explain: T(
-          `Excel cherche « S01 » dans la colonne A, trouve la ligne 4, et renvoie la 3ᵉ colonne de cette ligne : 6 €. Si tu oublies <code>FAUX</code>, Excel peut renvoyer un mauvais résultat <strong>sans aucune erreur</strong> : c'est le bug silencieux n°1 !`,
-          `Excel looks for "S01" in column A, finds row 4, and returns the 3rd column of that row: €6. If you forget <code>FALSE</code>, Excel may return a wrong result <strong>with no error at all</strong>: the #1 silent bug!`),
+          `Excel cherche « S01 » dans la colonne A, trouve la ligne 4, et renvoie la 3ᵉ colonne de cette ligne : 6 $. Si tu oublies <code>FAUX</code>, Excel peut renvoyer un mauvais résultat <strong>sans aucune erreur</strong> : c'est le bug silencieux n°1 !`,
+          `Excel looks for "S01" in column A, finds row 4, and returns the 3rd column of that row: $6. If you forget <code>FALSE</code>, Excel may return a wrong result <strong>with no error at all</strong>: the #1 silent bug!`),
         pro: T('Limite : RECHERCHEV ne peut chercher que dans la colonne de <em>gauche</em> du tableau. Les deux leçons suivantes te montrent comment dépasser ça.',
                'Limit: VLOOKUP can only search the <em>leftmost</em> column of the table. The next two lessons show how to go beyond that.'),
       },
@@ -435,7 +435,7 @@ window.CHAPTERS = [
           ['S01', T('Savon Menthe', 'Mint Soap'), 6],
           ['S02', T('Savon Miel', 'Honey Soap'), 7],
         ],
-        fmt: { C: 'eur', F: 'eur' },
+        fmt: { C: 'money', F: 'money' },
         target: 'F2',
         tests: [
           { expect: 7 },
@@ -450,8 +450,8 @@ window.CHAPTERS = [
         ],
         solution: T('=INDEX(C2:C5;EQUIV(E2;B2:B5;0))', '=INDEX(C2:C5,MATCH(E2,B2:B5,0))'),
         explain: T(
-          `« Savon Miel » est en 4ᵉ position dans <code>B2:B5</code> → <code>EQUIV</code> renvoie 4 → <code>INDEX</code> prend la 4ᵉ valeur de <code>C2:C5</code> : 7 €. Le <code>0</code> demande une correspondance exacte.`,
-          `"Honey Soap" is in 4th position in <code>B2:B5</code> → <code>MATCH</code> returns 4 → <code>INDEX</code> takes the 4th value of <code>C2:C5</code>: €7. The <code>0</code> asks for an exact match.`),
+          `« Savon Miel » est en 4ᵉ position dans <code>B2:B5</code> → <code>EQUIV</code> renvoie 4 → <code>INDEX</code> prend la 4ᵉ valeur de <code>C2:C5</code> : 7 $. Le <code>0</code> demande une correspondance exacte.`,
+          `"Honey Soap" is in 4th position in <code>B2:B5</code> → <code>MATCH</code> returns 4 → <code>INDEX</code> takes the 4th value of <code>C2:C5</code>: $7. The <code>0</code> asks for an exact match.`),
         pro: T('Astuce de pro : dans Excel 365 / 2021, <code>RECHERCHEX</code> (XLOOKUP) remplace les deux : <code>=RECHERCHEX(E2;B2:B5;C2:C5)</code>. Tu l\'apprendras au niveau 5, mais comprendre INDEX/EQUIV reste précieux.',
                'Pro tip: in Excel 365 / 2021, <code>XLOOKUP</code> replaces both: <code>=XLOOKUP(E2,B2:B5,C2:C5)</code>. You\'ll learn it at level 5, but understanding INDEX/MATCH is still valuable.'),
       },
@@ -474,7 +474,7 @@ window.CHAPTERS = [
           ['S01', T('Savon Menthe', 'Mint Soap'), 6],
           ['S02', T('Savon Miel', 'Honey Soap'), 7],
         ],
-        fmt: { C: 'eur', F: 'eur' },
+        fmt: { C: 'money', F: 'money' },
         target: 'F2',
         tests: [
           { expect: T('Introuvable', 'Not found') },
@@ -546,11 +546,11 @@ window.CHAPTERS = [
             explain: T('Oui : c\'est un film sur une période. Ce que l\'entreprise possède à une date, c\'est le bilan.', 'Yes: it\'s a movie over a period. What the company owns on a date is the balance sheet.'),
           },
           {
-            q: T('Chiffre d\'affaires 10 000 € − charges 7 500 € = ?', 'Sales 10,000 − expenses 7,500 = ?'),
+            q: T('Chiffre d\'affaires 10 000 $ − charges 7 500 $ = ?', 'Sales 10,000 − expenses 7,500 = ?'),
             options: [
-              T('Un résultat de 2 500 € (bénéfice)', 'A result of 2,500 (profit)'),
-              T('Un résultat de 17 500 €', 'A result of 17,500'),
-              T('Une perte de 2 500 €', 'A loss of 2,500'),
+              T('Un résultat de 2 500 $ (bénéfice)', 'A result of 2,500 (profit)'),
+              T('Un résultat de 17 500 $', 'A result of 17,500'),
+              T('Une perte de 2 500 $', 'A loss of 2,500'),
               T('Impossible à calculer', 'Impossible to calculate'),
             ],
             answer: 0,
@@ -740,12 +740,12 @@ window.CHAPTERS = [
                <details><summary>Hint</summary><p><code>B13</code>: <code>=B11-B10</code><br><code>B14</code>: <code>=B13/B11</code></p></details>`),
           },
           {
-            title: T('Mets les bons formats (€ et %)', 'Apply the right formats (€ and %)'),
+            title: T('Mets les bons formats ($ et %)', 'Apply the right formats ($ and %)'),
             body: T(
-              `<p>Sélectionne les cases d'argent (<code>B3</code>, <code>B5</code>, <code>B6</code>, <code>B10</code> à <code>B13</code>) : <kbd>Ctrl</kbd> + clic pour en choisir plusieurs, puis <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Nombre → Monétaire → €</em>.</p>
+              `<p>Sélectionne les cases d'argent (<code>B3</code>, <code>B5</code>, <code>B6</code>, <code>B10</code> à <code>B13</code>) : <kbd>Ctrl</kbd> + clic pour en choisir plusieurs, puis <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Nombre → Monétaire → $</em>.</p>
                <p>Pour les pourcentages (<code>B7</code>, <code>B8</code>, <code>B14</code>) : clique sur le bouton <strong>%</strong> du groupe <em>Nombre</em> (onglet <em>Accueil</em>).</p>
                <p><em>iPad :</em> sélectionne les cases, onglet <em>Accueil</em>, puis le menu <em>Format numérique</em>.</p>`,
-              `<p>Select the money cells (<code>B3</code>, <code>B5</code>, <code>B6</code>, <code>B10</code> to <code>B13</code>): <kbd>Ctrl</kbd> + click to pick several, then <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Number → Currency → €</em>.</p>
+              `<p>Select the money cells (<code>B3</code>, <code>B5</code>, <code>B6</code>, <code>B10</code> to <code>B13</code>): <kbd>Ctrl</kbd> + click to pick several, then <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Number → Currency → $</em>.</p>
                <p>For percentages (<code>B7</code>, <code>B8</code>, <code>B14</code>): click the <strong>%</strong> button in the <em>Number</em> group (<em>Home</em> tab).</p>
                <p><em>iPad:</em> select the cells, <em>Home</em> tab, then the <em>Number format</em> menu.</p>`),
           },
@@ -794,7 +794,7 @@ window.CHAPTERS = [
           { id: 'c12', group: 'calc', kind: 'calc', cell: 'B12', label: T('Prix de vente TTC (B12)', 'Selling price incl. VAT (B12)') },
           { id: 'c13', group: 'calc', kind: 'calc', cell: 'B13', label: T('Bénéfice (B13)', 'Profit (B13)') },
           { id: 'c14', group: 'calc', kind: 'calc', cell: 'B14', display: 'pct', tol: 0.0005, label: T('Taux de marque (B14)', 'Margin rate (B14)') },
-          { id: 'd1', group: 'design', kind: 'format', type: 'euro', cells: ['B3', 'B5', 'B6', 'B10', 'B11', 'B12', 'B13'], label: T('Les montants sont en euros €', 'Amounts are formatted in euros €') },
+          { id: 'd1', group: 'design', kind: 'format', type: 'money', cells: ['B3', 'B5', 'B6', 'B10', 'B11', 'B12', 'B13'], label: T('Les montants sont en dollars $', 'Amounts are formatted in dollars $') },
           { id: 'd2', group: 'design', kind: 'format', type: 'percent', cells: ['B7', 'B8', 'B14'], label: T('Les taux sont en pourcentage %', 'Rates are formatted as percentages %') },
           { id: 'd3', group: 'design', kind: 'bold', cells: ['A1'], label: T('Le titre est en gras', 'The title is bold') },
           { id: 'd4', group: 'design', kind: 'fill', cells: ['A2', 'B2'], label: T('L\'en-tête a une couleur de fond', 'The header has a fill colour') },

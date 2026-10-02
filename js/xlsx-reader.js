@@ -74,7 +74,9 @@ const XlsxReader = (() => {
       numFmtCode: code,
       currencyBuiltin: BUILTIN_CURRENCY.has(xf.numFmtId),
       percent: /%/.test(code) || xf.numFmtId === 9 || xf.numFmtId === 10,
-      euro: /€|\[\$€|\\u20ac/i.test(code),
+      // Canadian dollars: a $ sign in the format (but not the $ that only introduces a euro tag like [$€-40C])
+      money: /\$/.test(code.replace(/\[\$€[^\]]*\]/g, '')),
+      euroSign: /€/.test(code),
       date: isDateFmt(code, xf.numFmtId),
       bold: font.bold, size: font.size,
       filled: fill.solid, fillKey: fill.solid ? fill.key : null,

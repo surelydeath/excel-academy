@@ -78,8 +78,10 @@ async function withPivot(project, lang, opts = {}) {
       expect(res.filter((r) => !r.bonus).every((r) => r.ok), 'still passes when she changes her own inputs');
       res = await check(p, await variant(p, 'model', lang, (ws) => { for (let r = 10; r <= 14; r++) ws.getCell('B' + r).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFDE9D8' } }; }), lang);
       expect(!get(res, 'd5').ok, 'same colour for inputs and results is flagged');
-      res = await check(p, await variant(p, 'model', lang, (ws) => { ws.getCell('B10').numFmt = '"$"#,##0.00'; }), lang);
-      expect(!get(res, 'd1').ok, 'dollars instead of euros are flagged');
+      res = await check(p, await variant(p, 'model', lang, (ws) => { ws.getCell('B10').numFmt = '"€"#,##0.00'; }), lang);
+      expect(!get(res, 'd1').ok && /euro/i.test(plain(get(res, 'd1').msg)), 'euros instead of dollars are flagged: ' + plain(get(res, 'd1').msg));
+      res = await check(p, await variant(p, 'model', lang, (ws) => { ws.getCell('B10').numFmt = '[$$-1009]#,##0.00'; ws.getCell('B11').numFmt = '[$$-C0C]#,##0.00'; }), lang);
+      expect(get(res, 'd1').ok, 'Canadian locale currency tags ([$$-1009], [$$-C0C]) are accepted');
       const zip = await JSZip.loadAsync(fs.readFileSync(asset(p, 'model', lang)));
       zip.file('xl/charts/chart1.xml', '<c:chartSpace/>');
       res = await check(p, await zip.generateAsync({ type: 'nodebuffer' }), lang);
