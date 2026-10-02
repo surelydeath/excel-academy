@@ -4,7 +4,7 @@
 
   /* ------------------------------------------------------------ state */
   const KEY = 'excel-academy-v1';
-  const defaults = () => ({ lang: 'fr', xp: 0, done: {}, streak: { last: null, count: 0 }, badges: {}, seenWelcome: false });
+  const defaults = () => ({ lang: 'fr', xp: 0, done: {}, streak: { last: null, count: 0 }, badges: {}, bonus: {}, steps: {} });
   let state = load();
 
   function load() {
@@ -22,8 +22,14 @@
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
   const today = () => new Date().toISOString().slice(0, 10);
 
-  const ALL = CHAPTERS.flatMap((c) => c.lessons.map((l) => Object.assign(l, { chapterId: c.id })));
+  // Chapters are grouped by track (skills, visual, finance); the "next lesson" follows this order.
+  const chaptersOf = (trackId) => CHAPTERS.filter((c) => c.track === trackId);
+  const ORDERED = TRACKS.flatMap((tr) => chaptersOf(tr.id));
+  const ALL = ORDERED.flatMap((c) => c.lessons.map((l) => Object.assign(l, { chapterId: c.id })));
   const chapterOf = (id) => CHAPTERS.find((c) => c.id === id);
+  const trackOf = (c) => TRACKS.find((tr) => tr.id === c.track);
+  const numOf = (c) => chaptersOf(c.track).indexOf(c) + 1;
+  const trackProgress = (tr) => chaptersOf(tr.id).reduce((a, c) => { const p = chapterProgress(c); return { done: a.done + p.done, total: a.total + p.total }; }, { done: 0, total: 0 });
   const lessonOf = (id) => ALL.find((l) => l.id === id);
   const isDone = (id) => !!state.done[id];
   const chapterProgress = (c) => ({ done: c.lessons.filter((l) => isDone(l.id)).length, total: c.lessons.length });
@@ -87,31 +93,46 @@
       case 'level2': return ALL.filter((l) => l.chapterId === 'formulas' && l.level === 1).every((l) => isDone(l.id));
       case 'five': return doneIds.length >= 5;
       case 'chapter': return CHAPTERS.some((c) => c.lessons.length && c.lessons.every((l) => isDone(l.id)));
+      case 'builder': return ALL.some((l) => l.type === 'build' && isDone(l.id));
+      case 'bonus': return Object.values(state.bonus).some((a) => a.length > 0);
       default: return false;
     }
   }
 
-  function completeLesson(lesson, { hints = 0, wrongs = 0 }) {
-    const result = { gain: 0, newBadges: [], levelUp: null, repeat: isDone(lesson.id) };
-    if (!result.repeat) {
-      const before = gardenInfo().idx;
-      result.gain = lesson.type === 'quiz' ? Math.max(3, lesson.xp - 2 * wrongs) : Math.max(4, lesson.xp - 3 * hints);
-      state.xp += result.gain;
-      state.done[lesson.id] = { xp: result.gain, hints: lesson.type === 'quiz' ? null : hints, date: today() };
-      // streak
-      const d = today();
-      if (state.streak.last !== d) {
-        const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
-        state.streak.count = state.streak.last === y ? state.streak.count + 1 : 1;
-        state.streak.last = d;
-      }
-      // badges
-      BADGES.forEach((b) => { if (!state.badges[b.id] && badgeEarned(b.id)) { state.badges[b.id] = d; result.newBadges.push(b); } });
-      const after = gardenInfo();
-      if (after.idx > before) result.levelUp = after.cur;
-      save(); renderTopbar();
+  // Adds XP, updates the streak, unlocks badges / garden levels, saves.
+  function reward(gain) {
+    const result = { gain, newBadges: [], levelUp: null, repeat: false };
+    const before = gardenInfo().idx;
+    state.xp += gain;
+    const d = today();
+    if (state.streak.last !== d) {
+      const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+      state.streak.count = state.streak.last === y ? state.streak.count + 1 : 1;
+      state.streak.last = d;
     }
+    BADGES.forEach((b) => { if (!state.badges[b.id] && badgeEarned(b.id)) { state.badges[b.id] = d; result.newBadges.push(b); } });
+    const after = gardenInfo();
+    if (after.idx > before) result.levelUp = after.cur;
+    save(); renderTopbar();
     return result;
+  }
+
+  function completeLesson(lesson, { hints = 0, wrongs = 0 }) {
+    if (isDone(lesson.id)) return { gain: 0, newBadges: [], levelUp: null, repeat: true };
+    const gain = lesson.type === 'quiz' ? Math.max(3, lesson.xp - 2 * wrongs)
+      : lesson.type === 'build' ? lesson.xp
+        : Math.max(4, lesson.xp - 3 * hints);
+    state.done[lesson.id] = { xp: gain, hints: lesson.type === 'practice' ? hints : null, date: today() };
+    return reward(gain);
+  }
+
+  // Project bonuses can be earned on later uploads: 5 XP each, once.
+  function awardBonus(lesson, ids) {
+    const have = state.bonus[lesson.id] = state.bonus[lesson.id] || [];
+    const fresh = ids.filter((i) => !have.includes(i));
+    if (!fresh.length) return null;
+    have.push(...fresh);
+    return reward(5 * fresh.length);
   }
 
   function celebrate(res) {
@@ -140,16 +161,27 @@
   function viewHome() {
     const g = gardenInfo(), nl = nextLesson();
     const started = Object.keys(state.done).length > 0;
-    const chapterCards = CHAPTERS.map((c) => {
+    const chapterCard = (c) => {
       const p = chapterProgress(c), live = c.lessons.length > 0;
       return `<a class="chapter c-${c.color}" href="#/c/${c.id}">
-        <span class="num">${t('chapterWord')} ${c.num}</span>${live ? '' : `<span class="soon">${t('soon')}</span>`}
+        <span class="num">${t('chapterWord')} ${numOf(c)}</span>${live ? '' : `<span class="soon">${t('soon')}</span>`}
         <div class="blob-wrap"><div class="blob">${esc(L(c.title))}</div></div>
         <p>${c.icon} ${esc(L(c.tagline))}</p>
         <div class="meta">${live
           ? `<div class="bar"><i style="width:${Math.round((p.done / p.total) * 100)}%"></i></div><span>${t('lessonsDone', p.done, p.total)}</span>`
           : `<span class="muted">${t('comingSoon')} · ${c.roadmap.length} ${state.lang === 'fr' ? 'sujets' : 'topics'}</span>`}</div>
       </a>`;
+    };
+    const trackSections = TRACKS.map((tr) => {
+      const p = trackProgress(tr);
+      return `<section class="track c-${tr.color}">
+        <div class="track-head">
+          <span class="track-ic">${tr.icon}</span>
+          <div class="track-title"><h2>${esc(L(tr.title))}</h2><p class="muted">${esc(L(tr.tagline))}</p></div>
+          ${p.total ? `<div class="track-prog"><div class="bar green"><i style="width:${Math.round((p.done / p.total) * 100)}%"></i></div><small>${t('lessonsDone', p.done, p.total)}</small></div>` : ''}
+        </div>
+        <div class="grid">${chaptersOf(tr.id).map(chapterCard).join('')}</div>
+      </section>`;
     }).join('');
 
     const badges = BADGES.map((b) => `<div class="badge ${state.badges[b.id] ? '' : 'locked'}"><span class="ic">${b.icon}</span><div><b>${esc(L(b.title))}</b><small>${esc(L(b.desc))}</small></div></div>`).join('');
@@ -169,8 +201,7 @@
           <span class="muted">${g.nxt ? t('xpToNext', g.nxt.xp - state.xp, L(g.nxt.name)) : t('maxLevel')}</span>
         </div>
       </section>
-      <div class="section-title"><h2>${t('chapters')}</h2></div>
-      <div class="grid">${chapterCards}</div>
+      ${trackSections}
       <div class="section-title"><h2>${t('badges')}</h2></div>
       <div class="badges">${badges}</div>
       <p style="margin-top:34px;text-align:center"><button class="btn soft" id="resetBtn" style="font-size:.85rem;min-height:38px;padding:8px 18px">${t('reset')}</button></p>`;
@@ -186,6 +217,8 @@
     };
   }
 
+  const typeLabel = (l) => (l.type === 'quiz' ? 'Quiz' : l.type === 'build' ? t('projectWord') : t('practiceWord'));
+
   function viewChapter(id) {
     const c = chapterOf(id);
     if (!c) return go('#/');
@@ -196,12 +229,12 @@
       const levels = [...new Set(c.lessons.map((l) => l.level))].sort();
       body += levels.map((lv) => `
         <section class="level-block">
-          <h2><span class="lvl-pill">${t('level')} ${lv}</span> ${esc(L(LEVELS[lv]))}</h2>
+          <h2><span class="lvl-pill">${t('level')} ${lv}</span> ${esc(L((c.levelNames || {})[lv] || LEVELS[lv]))}</h2>
           <div class="lessons">${c.lessons.filter((l) => l.level === lv).map((l) => {
             const i = c.lessons.indexOf(l) + 1;
             return `<a class="lesson-card ${isDone(l.id) ? 'done' : ''} ${nl && nl.id === l.id ? 'next' : ''}" href="#/l/${l.id}">
               <span class="st">${isDone(l.id) ? '✓' : i}</span>
-              <span><b>${esc(L(l.title))}</b><small>${l.type === 'quiz' ? 'Quiz' : (state.lang === 'fr' ? 'Pratique' : 'Practice')} · ${l.xp} XP</small></span>
+              <span><b>${esc(L(l.title))}</b><small>${typeLabel(l)} · ${l.xp} XP</small></span>
             </a>`;
           }).join('')}</div>
         </section>`).join('');
@@ -215,7 +248,7 @@
       <div class="chapter-head c-${c.color}">
         <div class="blob big">${esc(L(c.title))}</div>
         <div class="info">
-          <span class="tag">${t('chapterWord')} ${c.num}</span>
+          <span class="tag">${esc(L(trackOf(c).title))} · ${t('chapterWord')} ${numOf(c)}</span>
           <h1 style="margin-top:8px">${c.icon} ${esc(L(c.tagline))}</h1>
           ${c.lessons.length ? `<div class="bar green" style="max-width:380px"><i style="width:${Math.round((p.done / p.total) * 100)}%"></i></div><p class="muted" style="margin:.4em 0 0">${t('lessonsDone', p.done, p.total)}</p>
           ${nl ? `<p><a class="btn" href="#/l/${nl.id}">${p.done ? t('continue') : t('start')} →</a></p>` : ''}` : `<p class="muted">${t('comingSoon')} ✨</p>`}
@@ -237,6 +270,7 @@
     const c = chapterOf(lesson.chapterId);
     document.title = L(lesson.title) + ' · ' + t('appName');
     if (lesson.type === 'quiz') return viewQuiz(lesson, c);
+    if (lesson.type === 'build') return viewBuild(lesson, c);
     return viewPractice(lesson, c);
   }
 
@@ -394,6 +428,104 @@
     $('#checkBtn').onclick = doCheck;
     window.scrollTo(0, 0);
     setTimeout(() => input.focus({ preventScroll: true }), 50);
+  }
+
+  /* ---- build project: do it in real Excel, then upload the file to be checked ---- */
+  function viewBuild(lesson, c) {
+    const { next } = lessonFrame(lesson, c);
+    const ticks = (state.steps[lesson.id] = state.steps[lesson.id] || []);
+    const startUrl = L(lesson.files.start), modelUrl = L(lesson.files.model);
+    const steps = lesson.steps.map((s, i) => `
+      <li class="step ${ticks[i] ? 'done' : ''}" data-i="${i}">
+        <div class="step-n">${i + 1}</div>
+        <div class="step-body">
+          <div class="step-title"><b>${L(s.title)}</b>
+            <label class="step-tick"><input type="checkbox" data-step="${i}" ${ticks[i] ? 'checked' : ''}> ${t('stepDone')}</label></div>
+          <div class="prose">${L(s.body)}</div>
+        </div>
+      </li>`).join('');
+
+    app().innerHTML = `
+      <a class="back" href="#/c/${c.id}">${t('backChapter', esc(L(c.title)))}</a>
+      <div class="lesson-grid c-${c.color}">
+        <div class="card">
+          <span class="tag">${t('level')} ${lesson.level}</span><span class="tag">${t('projectWord')}</span><span class="tag">${lesson.xp} XP</span>
+          <h1 class="lesson-title">${esc(L(lesson.title))}</h1>
+          <div class="prose">${L(lesson.intro)}</div>
+          <div class="actions"><a class="btn" href="${esc(startUrl)}" download>⬇ ${t('downloadStart')}</a><span class="muted" style="font-size:.9rem">${t('openInExcel')}</span></div>
+          <ol class="steps">${steps}</ol>
+        </div>
+        <div class="sticky">
+          <div class="card upload-card">
+            <h2>📤 ${t('uploadTitle')}</h2>
+            <p class="muted" style="margin-top:0">${t('uploadHelp')}</p>
+            <label class="drop" id="drop" for="fileInput"><span class="drop-ic">📄</span><b>${t('dropHere')}</b><small>.xlsx</small></label>
+            <input type="file" id="fileInput" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+            <p class="privacy">🔒 ${t('privacy')}</p>
+            <div id="report"></div>
+          </div>
+          <div id="teacher"></div>
+          <div class="actions" id="nextRow"></div>
+        </div>
+      </div>`;
+
+    $$('input[data-step]').forEach((box) => box.addEventListener('change', () => {
+      ticks[+box.dataset.step] = box.checked; save();
+      box.closest('.step').classList.toggle('done', box.checked);
+    }));
+
+    const report = $('#report'), drop = $('#drop'), input = $('#fileInput');
+
+    function renderReport(results) {
+      const req = results.filter((r) => !r.bonus), okReq = req.filter((r) => r.ok).length;
+      const groups = [['calc', t('groupCalc')], ['design', t('groupDesign')], ['bonus', t('groupBonus')]];
+      const list = groups.map(([g, title]) => `
+        <h3 class="chk-group">${title}</h3>
+        <ul class="checks">${results.filter((r) => r.group === g).map((r) => `
+          <li class="chk ${r.ok ? 'ok' : r.bonus ? 'opt' : 'bad'}"><span class="ic">${r.ok ? '✓' : r.bonus ? '○' : '✗'}</span>
+            <div><b>${esc(r.label)}</b>${r.msg ? `<div class="chk-msg">${r.msg}</div>` : ''}</div></li>`).join('')}</ul>`).join('');
+      report.innerHTML = `
+        <div class="score"><div class="bar green"><i style="width:${Math.round((okReq / req.length) * 100)}%"></i></div><b>${t('checksPassed', okReq, req.length)}</b></div>
+        ${list}`;
+      return okReq === req.length;
+    }
+
+    function finish(results) {
+      const out = completeLesson(lesson, {});
+      const bonusIds = results.filter((r) => r.bonus && r.ok).map((r) => r.id);
+      const bonusRes = awardBonus(lesson, bonusIds);
+      $('#teacher').innerHTML = `
+        <div class="feedback good">🎉 <b>${esc(pick(t('bravo')))}</b> ${out.gain ? `<span class="xp-pop">${t('xpGained', out.gain)}</span>` : `<span class="muted">${t('alreadyDone')}</span>`}
+          ${bonusRes ? `<br><span class="xp-pop">✨ ${t('bonusXp', bonusRes.gain)}</span>` : ''}</div>
+        <div class="teacher"><span class="face">👩‍🏫</span><div><b>${t('teacherSays')}</b><br>${L(lesson.explain)}</div></div>
+        ${lesson.pro ? `<div class="teacher pro"><span class="face">✨</span><div><b>${t('proTip')}</b><br>${L(lesson.pro)}</div></div>` : ''}`;
+      $('#nextRow').innerHTML = `<a class="btn soft" href="${esc(modelUrl)}" download>⬇ ${t('downloadModel')}</a>`
+        + (next ? `<a class="btn green" href="#/l/${next.id}">${t('next')} →</a>` : `<a class="btn green" href="#/c/${c.id}">${t('nextChapter')} →</a>`);
+      if (!out.repeat) celebrate(out);
+      if (bonusRes) setTimeout(() => celebrate(bonusRes), out.repeat ? 0 : 2200);
+      $('#teacher').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    async function handleFile(file) {
+      if (!file) return;
+      report.innerHTML = `<p class="muted">⏳ ${t('reading')}</p>`;
+      try {
+        if (typeof JSZip === 'undefined') throw new Error('nolib');
+        const wb = await XlsxReader.read(await file.arrayBuffer(), JSZip);
+        const results = ProjectChecks.run(lesson, wb, state.lang);
+        const allOk = renderReport(results);
+        $('#teacher').innerHTML = ''; $('#nextRow').innerHTML = '';
+        if (allOk) finish(results);
+        else { const bonusIds = results.filter((r) => r.bonus && r.ok).map((r) => r.id); if (isDone(lesson.id) && bonusIds.length) awardBonus(lesson, bonusIds); }
+      } catch (e) {
+        report.innerHTML = `<div class="feedback bad">🤔 ${e.message === 'nolib' ? t('libError') : ProjectChecks.MSG[state.lang].notFile}</div>`;
+      } finally { input.value = ''; }
+    }
+    input.addEventListener('change', () => handleFile(input.files[0]));
+    ['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+    ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
+    drop.addEventListener('drop', (e) => handleFile(e.dataTransfer.files[0]));
+    window.scrollTo(0, 0);
   }
 
   /* ---- quiz lesson ---- */

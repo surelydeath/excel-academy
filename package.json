@@ -1,0 +1,16 @@
+{
+  "name": "excel-academy",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Pastel step-by-step site to learn Excel formulas, design and finance (FR/EN)",
+  "scripts": {
+    "start": "node serve.js",
+    "test": "node tests/verify-content.js && node tests/verify-projects.js",
+    "build:starters": "node tools/make-starters.js"
+  },
+  "devDependencies": {
+    "exceljs": "^4.4.0",
+    "hyperformula": "3.4.0",
+    "jszip": "^3.10.1"
+  }
+}

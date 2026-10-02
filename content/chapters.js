@@ -33,7 +33,7 @@ window.LEVELS = {
 window.CHAPTERS = [
   /* ---------------------------------------------------------- 1 */
   {
-    id: 'tables', num: 1, color: 'peach', icon: '📋',
+    id: 'tables', track: 'skills', color: 'peach', icon: '📋',
     title: T('Tableaux', 'Tables'),
     tagline: T('Construire un tableau propre et lisible', 'Build clean, readable tables'),
     lessons: [],
@@ -49,7 +49,7 @@ window.CHAPTERS = [
 
   /* ---------------------------------------------------------- 2 */
   {
-    id: 'formulas', num: 2, color: 'blue', icon: '🧮',
+    id: 'formulas', track: 'skills', color: 'blue', icon: '🧮',
     title: T('Formules', 'Formulas'),
     tagline: T('Du premier calcul aux recherches intelligentes', 'From your first calculation to smart lookups'),
     roadmap: [
@@ -498,7 +498,7 @@ window.CHAPTERS = [
 
   /* ---------------------------------------------------------- 3 */
   {
-    id: 'pivot', num: 3, color: 'green', icon: '📊',
+    id: 'pivot', track: 'skills', color: 'green', icon: '📊',
     title: T('Tableaux croisés', 'Pivot tables'),
     tagline: T('Résumer des milliers de lignes en 3 clics', 'Summarize thousands of rows in 3 clicks'),
     lessons: [],
@@ -514,7 +514,7 @@ window.CHAPTERS = [
 
   /* ---------------------------------------------------------- 4 */
   {
-    id: 'financials', num: 4, color: 'lilac', icon: '💶',
+    id: 'financials', track: 'finance', color: 'lilac', icon: '💶',
     title: T('États financiers', 'Financial statements'),
     tagline: T('Comprendre les chiffres d\'une entreprise', 'Understand a company\'s numbers'),
     roadmap: [
@@ -659,7 +659,7 @@ window.CHAPTERS = [
 
   /* ---------------------------------------------------------- 5 */
   {
-    id: 'tricks', num: 5, color: 'pink', icon: '✨',
+    id: 'tricks', track: 'skills', color: 'pink', icon: '✨',
     title: T('Outils & astuces', 'Tools & tricks'),
     tagline: T('Les raccourcis qui changent la vie', 'The shortcuts that change your life'),
     lessons: [],
@@ -673,9 +673,161 @@ window.CHAPTERS = [
     ],
   },
 
+  /* ------------------------------------------------- visual: projects */
+  {
+    id: 'dash', track: 'visual', color: 'pink', icon: '🎀',
+    title: T('Outils pastel', 'Pastel tools'),
+    tagline: T('Construire de vrais outils beaux et utiles, dans Excel', 'Build real tools that are pretty and useful, in Excel'),
+    levelNames: { 2: T('Projets', 'Projects') },
+    roadmap: [
+      T('Suivi de devis (statuts en couleur)', 'Quote tracker (colour-coded statuses)'),
+      T('Suivi des commandes avec graphiques', 'Order tracker with charts'),
+      T('Base de données clients', 'Customer database'),
+      T('Suivi de stock et inventaire', 'Stock and inventory tracker'),
+      T('Tableau de bord comptable annuel', 'Yearly accounting dashboard'),
+      T('Suivi de prospection', 'Prospecting tracker'),
+    ],
+    lessons: [
+      {
+        id: 'p1', type: 'build', level: 2, xp: 40,
+        title: T('Projet : le calculateur de prix', 'Project: the price calculator'),
+        intro: T(
+          `<p>Tu as vu les formules. Maintenant on construit un <strong>vrai outil dans Excel</strong> : un calculateur qui te dit à quel prix vendre un produit, avec ta marge et la TVA. C'est le même genre d'outil que dans les modèles pastel que tu aimes.</p>
+           <p>Trois étapes : <strong>calculer</strong>, <strong>formater</strong>, <strong>décorer</strong>. Ensuite tu déposes ton fichier ici et je le vérifie, case par case.</p>`,
+          `<p>You've seen formulas. Now we build a <strong>real tool in Excel</strong>: a calculator that tells you what price to sell a product at, with your margin and VAT. It's the same kind of tool as the pastel templates you like.</p>
+           <p>Three stages: <strong>calculate</strong>, <strong>format</strong>, <strong>decorate</strong>. Then you drop your file here and I check it, cell by cell.</p>`),
+        files: {
+          start: { fr: 'assets/calculateur-prix-depart-fr.xlsx', en: 'assets/calculateur-prix-depart-en.xlsx' },
+          model: { fr: 'assets/calculateur-prix-modele-fr.xlsx', en: 'assets/calculateur-prix-modele-en.xlsx' },
+        },
+        steps: [
+          {
+            title: T('Ouvre le fichier de départ', 'Open the starter file'),
+            body: T(
+              `<p>Télécharge le fichier de départ (bouton ci-dessus) et ouvre-le dans <strong>Excel</strong>. Tu y vois six cases de départ (matières, temps, taux horaire, autres coûts, marge, TVA) et <strong>cinq résultats vides</strong> de <code>B10</code> à <code>B14</code>.</p>
+               <p>Enregistre-le tout de suite sous un nouveau nom : <kbd>F12</kbd> sous Windows, ou <em>Fichier → Enregistrer une copie</em> sur iPad.</p>`,
+              `<p>Download the starter file (button above) and open it in <strong>Excel</strong>. You'll see six starting cells (materials, time, hourly rate, other costs, markup, VAT) and <strong>five empty results</strong> from <code>B10</code> to <code>B14</code>.</p>
+               <p>Save it under a new name right away: <kbd>F12</kbd> on Windows, or <em>File → Save a Copy</em> on iPad.</p>`),
+          },
+          {
+            title: T('Calcule le coût de revient (B10)', 'Calculate the cost price (B10)'),
+            body: T(
+              `<p>Coût de revient = <strong>matières + main-d'œuvre + autres coûts</strong>. La main-d'œuvre, c'est le temps (en minutes) ÷ 60 × le taux horaire.</p>
+               <p>Clique sur <code>B10</code> et écris la formule avec des <strong>références de cellules</strong> (<code>B3</code>, <code>B4</code>…), jamais avec des chiffres tapés.</p>
+               <details><summary>💡 Indice</summary><p>Matières <code>B3</code>, minutes <code>B4</code>, taux horaire <code>B5</code>, autres coûts <code>B6</code> :<br><code>=B3+B4/60*B5+B6</code></p></details>`,
+              `<p>Cost price = <strong>materials + labour + other costs</strong>. Labour is the time (in minutes) ÷ 60 × the hourly rate.</p>
+               <p>Click <code>B10</code> and write the formula using <strong>cell references</strong> (<code>B3</code>, <code>B4</code>…), never typed numbers.</p>
+               <details><summary>💡 Hint</summary><p>Materials <code>B3</code>, minutes <code>B4</code>, hourly rate <code>B5</code>, other costs <code>B6</code>:<br><code>=B3+B4/60*B5+B6</code></p></details>`),
+          },
+          {
+            title: T('Les prix de vente (B11 et B12)', 'The selling prices (B11 and B12)'),
+            body: T(
+              `<p><strong>Prix HT</strong> = coût de revient × (1 + taux de marge). <strong>Prix TTC</strong> = prix HT × (1 + TVA).</p>
+               <details><summary>💡 Indice</summary><p><code>B11</code> : <code>=B10*(1+B7)</code><br><code>B12</code> : <code>=B11*(1+B8)</code></p></details>`,
+              `<p><strong>Price excl. VAT</strong> = cost price × (1 + markup). <strong>Price incl. VAT</strong> = price excl. VAT × (1 + VAT).</p>
+               <details><summary>💡 Hint</summary><p><code>B11</code>: <code>=B10*(1+B7)</code><br><code>B12</code>: <code>=B11*(1+B8)</code></p></details>`),
+          },
+          {
+            title: T('Bénéfice et taux de marque (B13 et B14)', 'Profit and margin rate (B13 and B14)'),
+            body: T(
+              `<p><strong>Bénéfice</strong> = prix HT − coût de revient. <strong>Taux de marque</strong> = bénéfice ÷ prix HT.</p>
+               <p>⚠️ Ne confonds pas : le <em>taux de marge</em> se calcule sur le coût, le <em>taux de marque</em> sur le prix de vente. Avec 50 % de marge, tu n'as « que » 33 % de taux de marque !</p>
+               <details><summary>💡 Indice</summary><p><code>B13</code> : <code>=B11-B10</code><br><code>B14</code> : <code>=B13/B11</code></p></details>`,
+              `<p><strong>Profit</strong> = price excl. VAT − cost price. <strong>Margin rate</strong> = profit ÷ price excl. VAT.</p>
+               <p>⚠️ Don't mix them up: the <em>markup</em> is computed on cost, the <em>margin rate</em> on the selling price. With a 50% markup you only get a 33% margin rate!</p>
+               <details><summary>💡 Hint</summary><p><code>B13</code>: <code>=B11-B10</code><br><code>B14</code>: <code>=B13/B11</code></p></details>`),
+          },
+          {
+            title: T('Mets les bons formats (€ et %)', 'Apply the right formats (€ and %)'),
+            body: T(
+              `<p>Sélectionne les cases d'argent (<code>B3</code>, <code>B5</code>, <code>B6</code>, <code>B10</code> à <code>B13</code>) : <kbd>Ctrl</kbd> + clic pour en choisir plusieurs, puis <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Nombre → Monétaire → €</em>.</p>
+               <p>Pour les pourcentages (<code>B7</code>, <code>B8</code>, <code>B14</code>) : clique sur le bouton <strong>%</strong> du groupe <em>Nombre</em> (onglet <em>Accueil</em>).</p>
+               <p><em>iPad :</em> sélectionne les cases, onglet <em>Accueil</em>, puis le menu <em>Format numérique</em>.</p>`,
+              `<p>Select the money cells (<code>B3</code>, <code>B5</code>, <code>B6</code>, <code>B10</code> to <code>B13</code>): <kbd>Ctrl</kbd> + click to pick several, then <kbd>Ctrl</kbd> + <kbd>1</kbd> → <em>Number → Currency → €</em>.</p>
+               <p>For percentages (<code>B7</code>, <code>B8</code>, <code>B14</code>): click the <strong>%</strong> button in the <em>Number</em> group (<em>Home</em> tab).</p>
+               <p><em>iPad:</em> select the cells, <em>Home</em> tab, then the <em>Number format</em> menu.</p>`),
+          },
+          {
+            title: T('Colore le titre et l\'en-tête', 'Colour the title and header'),
+            body: T(
+              `<p>Mets le titre <code>A1</code> en <strong>gras</strong> (<kbd>Ctrl</kbd> + <kbd>G</kbd>) et plus grand. Puis donne une couleur de fond à l'en-tête <code>A2:B2</code> : <em>Accueil → Couleur de remplissage → Autres couleurs</em>.</p>
+               <p>Des pastels qui marchent bien : 🌸 rose <code>F9B9D0</code> · 💙 bleu <code>A8D3F5</code> · 🍑 pêche <code>FBC9A0</code> · 🌿 vert <code>BDE5A6</code> · 💜 lilas <code>D3B6F3</code>. (Onglet <em>Personnalisées</em> : saisis le code, ou choisis une teinte proche.)</p>`,
+              `<p>Make the title <code>A1</code> <strong>bold</strong> (<kbd>Ctrl</kbd> + <kbd>B</kbd>) and larger. Then give the header <code>A2:B2</code> a fill colour: <em>Home → Fill Color → More Colors</em>.</p>
+               <p>Pastels that work well: 🌸 pink <code>F9B9D0</code> · 💙 blue <code>A8D3F5</code> · 🍑 peach <code>FBC9A0</code> · 🌿 green <code>BDE5A6</code> · 💜 lilac <code>D3B6F3</code>. (<em>Custom</em> tab: type the code, or pick a close shade.)</p>`),
+          },
+          {
+            title: T('Sépare « à remplir » et « calculé » par la couleur', 'Separate "to fill in" from "calculated" with colour'),
+            body: T(
+              `<p>Règle d'or des tableaux pros : on voit au premier coup d'œil <strong>où on tape</strong> et <strong>ce qui se calcule tout seul</strong>.</p>
+               <p>Donne une couleur claire aux cases de départ <code>B3:B8</code> (par ex. pêche <code>FDE9D8</code>) et une <strong>autre</strong> couleur aux résultats <code>B10:B14</code> (par ex. vert <code>E4F5DA</code>).</p>`,
+              `<p>Golden rule of pro spreadsheets: you can see at a glance <strong>where to type</strong> and <strong>what calculates itself</strong>.</p>
+               <p>Give the starting cells <code>B3:B8</code> a light colour (e.g. peach <code>FDE9D8</code>) and the results <code>B10:B14</code> a <strong>different</strong> colour (e.g. green <code>E4F5DA</code>).</p>`),
+          },
+          {
+            title: T('✨ Bonus : va plus loin', '✨ Bonus: go further'),
+            body: T(
+              `<p>Facultatif, mais c'est ce qui fait la différence :</p>
+               <p>• <strong>Mise en forme conditionnelle</strong> sur <code>B14</code> : une couleur d'alerte si le taux de marque passe sous 20 % (<em>Accueil → Mise en forme conditionnelle</em>).<br>
+                  • <strong>Liste déroulante</strong> sur la TVA <code>B8</code> : 5,5 % / 10 % / 20 % (<em>Données → Validation des données → Liste</em>).<br>
+                  • <strong>Graphique</strong> : un secteur qui montre la part des matières, de la main-d'œuvre et des autres coûts (<em>Insertion → Graphique</em>).</p>`,
+              `<p>Optional, but it's what makes the difference:</p>
+               <p>• <strong>Conditional formatting</strong> on <code>B14</code>: an alert colour if the margin rate drops below 20% (<em>Home → Conditional Formatting</em>).<br>
+                  • <strong>Dropdown list</strong> on the VAT <code>B8</code>: 5.5% / 10% / 20% (<em>Data → Data Validation → List</em>).<br>
+                  • <strong>Chart</strong>: a pie showing the share of materials, labour and other costs (<em>Insert → Chart</em>).</p>`),
+          },
+        ],
+        // cells the learner types into (the starting values); checks re-run her formulas on other values
+        inputs: ['B3', 'B4', 'B5', 'B6', 'B7', 'B8'],
+        scenarios: [
+          { B3: 10, B4: 60, B5: 20, B6: 2, B7: 0.3, B8: 0.1 },
+          { B3: 0, B4: 0, B5: 10, B6: 5, B7: 1, B8: 0.2 },
+        ],
+        model: (i) => {
+          const cost = i.B3 + (i.B4 / 60) * i.B5 + i.B6, ht = cost * (1 + i.B7), ttc = ht * (1 + i.B8);
+          return { B10: cost, B11: ht, B12: ttc, B13: ht - cost, B14: ht ? (ht - cost) / ht : 0 };
+        },
+        checks: [
+          { id: 'c10', group: 'calc', kind: 'calc', cell: 'B10', label: T('Coût de revient (B10)', 'Cost price (B10)') },
+          { id: 'c11', group: 'calc', kind: 'calc', cell: 'B11', label: T('Prix de vente HT (B11)', 'Selling price excl. VAT (B11)') },
+          { id: 'c12', group: 'calc', kind: 'calc', cell: 'B12', label: T('Prix de vente TTC (B12)', 'Selling price incl. VAT (B12)') },
+          { id: 'c13', group: 'calc', kind: 'calc', cell: 'B13', label: T('Bénéfice (B13)', 'Profit (B13)') },
+          { id: 'c14', group: 'calc', kind: 'calc', cell: 'B14', display: 'pct', tol: 0.0005, label: T('Taux de marque (B14)', 'Margin rate (B14)') },
+          { id: 'd1', group: 'design', kind: 'format', type: 'euro', cells: ['B3', 'B5', 'B6', 'B10', 'B11', 'B12', 'B13'], label: T('Les montants sont en euros €', 'Amounts are formatted in euros €') },
+          { id: 'd2', group: 'design', kind: 'format', type: 'percent', cells: ['B7', 'B8', 'B14'], label: T('Les taux sont en pourcentage %', 'Rates are formatted as percentages %') },
+          { id: 'd3', group: 'design', kind: 'bold', cells: ['A1'], label: T('Le titre est en gras', 'The title is bold') },
+          { id: 'd4', group: 'design', kind: 'fill', cells: ['A2', 'B2'], label: T('L\'en-tête a une couleur de fond', 'The header has a fill colour') },
+          { id: 'd5', group: 'design', kind: 'fillGroups', groups: [['B3', 'B4', 'B5', 'B6', 'B7', 'B8'], ['B10', 'B11', 'B12', 'B13', 'B14']], label: T('Cases de départ et de résultat : deux couleurs différentes', 'Starting and result cells: two different colours') },
+          { id: 'b1', group: 'bonus', bonus: true, kind: 'feature', feature: 'conditionalFormatting', label: T('Mise en forme conditionnelle', 'Conditional formatting') },
+          { id: 'b2', group: 'bonus', bonus: true, kind: 'feature', feature: 'dataValidation', label: T('Liste déroulante', 'Dropdown list') },
+          { id: 'b3', group: 'bonus', bonus: true, kind: 'feature', feature: 'chart', label: T('Graphique', 'Chart') },
+        ],
+        explain: T(
+          `Tu viens de construire un outil qui marche pour <strong>n'importe quel produit</strong> : change les cases de départ et tout se recalcule. C'est exactement ce qu'on vérifie : tes formules utilisent des références, pas des chiffres tapés. Et la couleur n'est pas que de la déco : elle dit à l'utilisateur où il peut taper.`,
+          `You just built a tool that works for <strong>any product</strong>: change the starting cells and everything recalculates. That's exactly what we check: your formulas use references, not typed numbers. And colour isn't just decoration: it tells the user where they can type.`),
+        pro: T('Astuce de pro : cache le quadrillage (<em>Affichage → Quadrillage</em> décoché) et élargis les colonnes en double-cliquant entre deux lettres : ça fait tout de suite plus « pro ».',
+               'Pro tip: hide the gridlines (<em>View → Gridlines</em> unticked) and widen columns by double-clicking between two column letters: it instantly looks more "pro".'),
+      },
+    ],
+  },
+
+  {
+    id: 'design', track: 'visual', color: 'lilac', icon: '🎨',
+    title: T('Design & mise en forme', 'Design & formatting'),
+    tagline: T('Des tableaux qui donnent envie d\'être ouverts', 'Spreadsheets people want to open'),
+    lessons: [],
+    roadmap: [
+      T('Construire sa palette pastel (et la réutiliser)', 'Build your pastel palette (and reuse it)'),
+      T('Polices, tailles, alignements', 'Fonts, sizes, alignment'),
+      T('Bordures, fusions et espacement', 'Borders, merges and spacing'),
+      T('Mise en forme conditionnelle avancée', 'Advanced conditional formatting'),
+      T('Graphiques propres et lisibles', 'Clean, readable charts'),
+      T('Composer un tableau de bord', 'Composing a dashboard'),
+    ],
+  },
+
   /* ---------------------------------------------------------- 6 */
   {
-    id: 'word', num: 6, color: 'yellow', icon: '📝',
+    id: 'word', track: 'visual', color: 'yellow', icon: '📝',
     title: T('Word & rapports', 'Word & reports'),
     tagline: T('Transformer tes chiffres en rapport pro', 'Turn your numbers into a pro report'),
     lessons: [],
@@ -687,6 +839,39 @@ window.CHAPTERS = [
       T('Modèle de rapport financier pastel', 'Pastel financial report template'),
     ],
   },
+  /* ------------------------------------------------- finance: projects */
+  {
+    id: 'finprojects', track: 'finance', color: 'green', icon: '📈',
+    title: T('Modèles financiers', 'Financial models'),
+    tagline: T('Construire des outils de gestion qui servent vraiment', 'Build management tools that are actually useful'),
+    lessons: [],
+    roadmap: [
+      T('Budget mensuel avec objectifs', 'Monthly budget with targets'),
+      T('Seuil de rentabilité (point mort)', 'Break-even point'),
+      T('Compte de résultat prévisionnel', 'Forecast income statement'),
+      T('Plan de trésorerie sur 12 mois', '12-month cash-flow plan'),
+      T('Suivi de TVA et d\'impôts estimés', 'VAT and estimated-tax tracker'),
+      T('Tableau de bord comptable (comme sur ton modèle)', 'Accounting dashboard (like your template)'),
+    ],
+  },
+];
+
+window.TRACKS = [
+  {
+    id: 'skills', icon: '🧠', color: 'blue',
+    title: T('Compétences Excel', 'Excel skills'),
+    tagline: T('Maîtriser Excel de zéro à expert : tableaux, formules, tableaux croisés, astuces.', 'Master Excel from zero to expert: tables, formulas, pivot tables, tricks.'),
+  },
+  {
+    id: 'visual', icon: '🎀', color: 'pink',
+    title: T('Visuel & outils pastel', 'Visuals & pastel tools'),
+    tagline: T('Créer de beaux tableaux de bord, comme dans les modèles que tu aimes.', 'Create beautiful dashboards, like the templates you love.'),
+  },
+  {
+    id: 'finance', icon: '💶', color: 'green',
+    title: T('Finance', 'Finance'),
+    tagline: T('Comprendre les chiffres d\'une entreprise et construire des modèles financiers.', 'Understand a company\'s numbers and build financial models.'),
+  },
 ];
 
 window.BADGES = [
@@ -696,6 +881,8 @@ window.BADGES = [
   { id: 'level2',  icon: '🌸', title: T('Niveau 2', 'Level 2'),              desc: T('Termine tout le niveau 1 des formules', 'Finish all level 1 of formulas') },
   { id: 'five',    icon: '💐', title: T('Bouquet', 'Bouquet'),               desc: T('Termine 5 leçons', 'Finish 5 lessons') },
   { id: 'chapter', icon: '🏆', title: T('Chapitre complété', 'Chapter done'), desc: T('Termine un chapitre entier', 'Finish a whole chapter') },
+  { id: 'builder', icon: '🛠️', title: T('Bâtisseur', 'Builder'),              desc: T('Réussis ton premier projet dans Excel', 'Complete your first project in Excel') },
+  { id: 'bonus',   icon: '✨', title: T('Perfectionniste', 'Perfectionist'),  desc: T('Réussis un bonus de projet', 'Complete a project bonus') },
 ];
 
 window.GARDEN = [

@@ -221,6 +221,48 @@ table.sheet { border-collapse: separate; border-spacing: 0; width: 100%; font-si
 .opt[disabled] { cursor: default; }
 @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
+/* ---------- tracks on the home screen ---------- */
+.track { margin-top: 38px; }
+.track-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 16px 22px; margin-bottom: 18px; border-radius: var(--radius); background: var(--cl); border: 3px solid #fff; box-shadow: var(--shadow-sm); }
+.track-ic { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; background: #fff; font-size: 1.8rem; box-shadow: var(--shadow-sm); flex: none; }
+.track-title { flex: 1 1 280px; min-width: 0; }
+.track-title h2 { margin: 0; font-size: 1.5rem; }
+.track-title p { margin: 2px 0 0; font-size: .95rem; }
+.track-prog { flex: 0 1 200px; min-width: 140px; display: flex; flex-direction: column; gap: 4px; }
+.track-prog small { color: var(--ink-soft); }
+
+/* ---------- build projects ---------- */
+kbd { font-family: var(--font-mono); font-size: .8em; background: #fff; border: 1.5px solid var(--line); border-bottom-width: 3px; border-radius: 7px; padding: 1px 7px; white-space: nowrap; }
+details { margin: .6em 0; padding: 8px 14px; border-radius: 14px; background: var(--blue-l); }
+details summary { cursor: pointer; font-weight: 600; }
+details p { margin: .5em 0 .2em; }
+.steps { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; counter-reset: s; }
+.step { display: flex; gap: 14px; padding: 16px 18px; border-radius: 22px; background: #fff; border: 2px solid var(--line); box-shadow: var(--shadow-sm); transition: border-color .2s, background .2s; }
+.step.done { border-color: var(--green-d); background: var(--green-l); }
+.step-n { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--cd, var(--lilac-d)); color: #fff; font-weight: 700; }
+.step.done .step-n { background: var(--green-d); }
+.step-body { min-width: 0; flex: 1; }
+.step-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.step-tick { display: inline-flex; align-items: center; gap: 6px; font-size: .88rem; color: var(--ink-soft); cursor: pointer; min-height: 32px; }
+.step-tick input { width: 20px; height: 20px; accent-color: var(--green-d); }
+.step .prose { margin-top: 4px; }
+.upload-card h2 { margin-bottom: 6px; }
+.drop { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding: 26px 16px; border-radius: 22px; border: 3px dashed var(--cd, var(--pink-d)); background: var(--cl, var(--pink-l)); cursor: pointer; transition: transform .15s, background .15s; }
+.drop:hover, .drop.over { transform: scale(1.015); background: #fff; }
+.drop-ic { font-size: 2.2rem; }
+.drop small { color: var(--ink-soft); }
+.privacy { font-size: .85rem; color: var(--ink-soft); margin: 10px 0 0; }
+.score { display: flex; flex-direction: column; gap: 6px; margin: 18px 0 4px; }
+.chk-group { margin: 16px 0 6px; font-size: 1rem; }
+.checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.chk { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px; border-radius: 14px; background: #fff; border: 2px solid var(--line); }
+.chk .ic { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font-weight: 700; font-size: .85rem; color: #fff; background: var(--ink-soft); }
+.chk.ok { border-color: var(--green); background: var(--green-l); } .chk.ok .ic { background: var(--green-d); }
+.chk.bad { border-color: #f4a7b3; background: #fdf0f2; } .chk.bad .ic { background: #e66f86; }
+.chk.opt .ic { background: #c9bcd3; }
+.chk-msg { font-size: .92rem; margin-top: 2px; color: var(--ink); }
+.upload-card + #teacher { margin-top: 4px; }
+
 /* ---------- confetti ---------- */
 .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 60; overflow: hidden; }
 .confetti span { position: absolute; top: -30px; font-size: 1.7rem; animation: fall linear forwards; }

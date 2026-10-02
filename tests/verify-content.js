@@ -4,9 +4,9 @@
 const path = require('path');
 const root = path.join(__dirname, '..');
 
-const { HyperFormula } = require(path.join(root, 'vendor/hyperformula.full.min.js'));
+const { HyperFormula } = require('hyperformula');
 global.HyperFormula = HyperFormula;
-require(path.join(root, 'vendor/frFR.js'));
+require(path.join(root, 'node_modules/hyperformula/dist/languages/frFR.js'));
 global.window = global;
 require(path.join(root, 'content/chapters.js'));
 const Engine = require(path.join(root, 'js/engine.js'));
@@ -25,6 +25,7 @@ for (const lang of ['fr', 'en']) {
         if (!ok) failures++;
         continue;
       }
+      if (lesson.type === 'build') { console.log('· ' + lesson.id + ' build project (see verify-projects.js)'); continue; }
       const grid = lesson.grid.map((row) => row.map((c) => R(c, lang)));
       const formula = lesson.solution[lang];
       let ok = true;
